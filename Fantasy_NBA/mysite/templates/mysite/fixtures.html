@@ -1,0 +1,39 @@
+{% extends 'mysite/base.html' %}
+
+{% block title %} Player Comparison {% endblock %}
+
+{% block content %}
+
+<!-- nbafixtures/templates/nbafixtures/fixture_page.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NBA Fixtures</title>
+</head>
+<body>
+
+<h1>Select a Date</h1>
+
+<form method="post" action="">
+    {% csrf_token %}
+    <label for="date">Choose a date:</label>
+    <input type="date" id="date" name="date" required>
+    <button type="submit">Submit</button>
+</form>
+
+{% if fixtures %}
+    <h2>Fixtures for {{ specific_date }}</h2>
+    <ul>
+        {% for fixture in fixtures %}
+            <li>
+                {{ fixture.date.start }} - {{ fixture.teams.home.name }} {{ fixture.scores.home.points }} vs {{ fixture.scores.visitors.points }} {{ fixture.teams.visitors.name }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+</body>
+</html>
+
+
+{% endblock %}

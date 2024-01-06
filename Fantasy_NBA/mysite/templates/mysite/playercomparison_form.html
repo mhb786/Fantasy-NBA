@@ -1,0 +1,29 @@
+{% extends 'mysite/base.html' %}
+
+{% block title %}Player Comparison Form{% endblock %}
+
+{% block content %}
+    <div style="margin-top: 70px; margin-bottom: 20px; margin-left: 20px"> <!-- Increase the top margin -->
+        <h2 class="mb-4">Player Comparison</h2>
+
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form method="post" action="{% url 'playercomparison' %}" class="form">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="{{ form.player1.id_for_label }}">Select Player 1:</label>
+                        {{ form.player1 }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.player2.id_for_label }}">Select Player 2:</label>
+                        {{ form.player2 }}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Compare Players</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
