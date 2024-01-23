@@ -1,39 +1,85 @@
 {% extends 'mysite/base.html' %}
 
-{% block title %} Player Comparison {% endblock %}
+{% load tz %}  <!-- Load the timezone template tag library -->
+
+{% block title %} NBA Fixtures {% endblock %}
 
 {% block content %}
+    <form method="post" action="">
+        {% csrf_token %}
+        <label for="date">Choose a date:</label>
+        <input type="date" id="date" name="date" required>
+        <button type="submit">Submit</button>
+    </form>
 
-<!-- nbafixtures/templates/nbafixtures/fixture_page.html -->
-<!DOCTYPE html>
-<html>
-<head>
-    <title>NBA Fixtures</title>
-</head>
-<body>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding-top: 50px; /* Adjust the top padding based on your navbar height */
+        }
 
-<h1>Select a Date</h1>
+        .fixtures-container {
+            width: 80%;
+            margin: 20px auto;
+        }
 
-<form method="post" action="">
-    {% csrf_token %}
-    <label for="date">Choose a date:</label>
-    <input type="date" id="date" name="date" required>
-    <button type="submit">Submit</button>
-</form>
+        .fixture {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
 
-{% if fixtures %}
-    <h2>Fixtures for {{ specific_date }}</h2>
-    <ul>
-        {% for fixture in fixtures %}
-            <li>
-                {{ fixture.date.start }} - {{ fixture.teams.home.name }} {{ fixture.scores.home.points }} vs {{ fixture.scores.visitors.points }} {{ fixture.teams.visitors.name }}
-            </li>
-        {% endfor %}
-    </ul>
-{% endif %}
+        .team-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
 
-</body>
-</html>
+        .team-info img {
+            max-height: 40px;
+            max-width: 40px;
+            margin-right: 10px;
+        }
 
+        .score {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
 
+        .additional-info {
+            text-align: center;
+        }
+    </style>
+
+    <div class="fixtures-container">
+        {% if fixtures %}
+            <h2>Fixtures for {{ specific_date }}</h2>
+            {% for fixture in fixtures %}
+                <div class="fixture">
+                    <p>{{ fixture.date.start|date:"D d M Y H:i"|timezone:"UTC"|date:"D d M Y H:i"|timezone:"Europe/London" }}</p>
+                    <div class="team-info">
+                        <img src="{{ fixture.teams.home.logo }}" alt="{{ fixture.teams.home.name }} logo">
+                        <p>{{ fixture.teams.home.name }}</p>
+                        <span class="score">{{ fixture.scores.home.points }} - {{ fixture.scores.visitors.points }}</span>
+                        <p>{{ fixture.teams.visitors.name }}</p>
+                        <img src="{{ fixture.teams.visitors.logo }}" alt="{{ fixture.teams.visitors.name }} logo">
+                    </div>
+                    <p class="additional-info">
+                        <span>Arena: {{ fixture.arena.name }} ({{ fixture.arena.city }}, {{ fixture.arena.state }}, {{ fixture.arena.country }})</span>
+                    </p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No fixtures found for the specified date.</p>
+        {% endif %}
+    </div>
 {% endblock %}

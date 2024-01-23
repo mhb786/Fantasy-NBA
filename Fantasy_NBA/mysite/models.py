@@ -22,6 +22,22 @@ class NBAPlayer(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
+class Team(models.Model):
+    team_id = models.IntegerField(unique=True)
+    name = models.CharField(max_length=255)
+    nickname = models.CharField(max_length=255)
+    code = models.CharField(max_length=10)
+    city = models.CharField(max_length=255)
+    logo = models.URLField()
+    all_star = models.BooleanField(default=False)
+    nba_franchise = models.BooleanField(default=True)
+    conference = models.CharField(max_length=50, default='')  # Provide default value
+    division = models.CharField(max_length=50, default='')
+
+    def __str__(self):
+        return self.name
+
+
 class Fixture(models.Model):
     gamedate = models.DateTimeField()
     gametime = models.TimeField()

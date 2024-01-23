@@ -8,3 +8,11 @@ class PlayerComparisonForm(forms.Form):
 
 class DateSelectionForm(forms.Form):
     date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+
+class SeasonForm(forms.Form):
+    SEASON_CHOICES = [
+        ('2022-23', '2023-24'),
+        # Add other season choices as needed
+    ]
+
+    selected_season = forms.ChoiceField(choices=SEASON_CHOICES, label='Select Season')

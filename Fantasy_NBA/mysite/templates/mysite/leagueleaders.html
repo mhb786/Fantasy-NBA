@@ -1,0 +1,54 @@
+{% extends 'mysite/base.html' %}
+
+{% block title %} Player Comparison {% endblock %}
+
+{% block content %}
+    <form id="statsForm" method="post" action="{% url 'leagueleaders' %}" class="mb-5">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    {% if selected_season %}
+        <div id="playerStats">
+            <h1>Top Players for {{ selected_season }}</h1>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="container">
+                        <h2>Points Per Game</h2>
+                        <table class="table">
+                            <!-- Points Per Game Table Content -->
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="container">
+                        <h2>Assists Per Game</h2>
+                        <table class="table">
+                            <!-- Assists Per Game Table Content -->
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="container">
+                        <h2>Rebounds Per Game</h2>
+                        <table class="table">
+                            <!-- Rebounds Per Game Table Content -->
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <script>
+        document.getElementById('statsForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+            document.getElementById('playerStats').style.display = 'block';
+            this.submit(); // Manually submit the form
+        });
+    </script>
+{% endblock %}
