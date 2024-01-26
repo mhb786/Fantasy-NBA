@@ -1,0 +1,207 @@
+{% extends 'mysite/base.html' %}
+
+{% block title %} NBA Standings {% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA Standings</title>
+    <style>
+        body {
+            padding-top: 70px; /* Adjust this value based on your top navbar height */
+            position: relative;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .conference-heading {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .switch-label {
+            margin-right: 5px;
+        }
+
+        .switch {
+            margin-left: 10px;
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+<body>
+    <div class="switch-container">
+        <span class="switch-label">Conference Table:</span>
+        <label class="switch">
+            <input type="checkbox" id="conferenceSwitch">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <h1>NBA Standings</h1>
+
+    {% if error_message %}
+        <p>{{ error_message }}</p>
+    {% else %}
+        <div class="conference-heading" id="easternConferenceHeading">Eastern Conference</div>
+        <table id="easternConferenceTable">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Team</th>
+                    <th>Wins</th>
+                    <th>Losses</th>
+                    <th>Win Percentage</th>
+                    <th>Streak</th>
+                    <th>Home Win-Loss Ratio</th>
+                    <th>Away Win-Loss Ratio</th>
+                    <th>Games Behind</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rank in rank_list %}
+                    {% for team_standings in standings %}
+                        {% if team_standings.conference.name == "east" and team_standings.conference.rank == rank %}
+                            <tr>
+                                <td>{{ team_standings.conference.rank }}</td>
+                                <td>{{ team_standings.team.name }}</td>
+                                <td>{{ team_standings.win.total }}</td>
+                                <td>{{ team_standings.loss.total }}</td>
+                                <td>{{ team_standings.win.percentage }}</td>
+                                <td>{{ team_standings.streak }}</td>
+                                <td>{{ team_standings.win.home }}-{{ team_standings.loss.home }}</td>
+                                <td>{{ team_standings.win.away }}-{{ team_standings.loss.away }}</td>
+                                <td>{{ team_standings.gamesBehind }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="conference-heading" id="westernConferenceHeading" style="display: none;">Western Conference</div>
+        <table id="westernConferenceTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Team</th>
+                    <th>Wins</th>
+                    <th>Losses</th>
+                    <th>Win Percentage</th>
+                    <th>Streak</th>
+                    <th>Home Win-Loss Ratio</th>
+                    <th>Away Win-Loss Ratio</th>
+                    <th>Games Behind</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rank in rank_list %}
+                    {% for team_standings in standings %}
+                        {% if team_standings.conference.name == "west" and team_standings.conference.rank == rank%}
+                            <tr>
+                                <td>{{ team_standings.conference.rank }}</td>
+                                <td>{{ team_standings.team.name }}</td>
+                                <td>{{ team_standings.win.total }}</td>
+                                <td>{{ team_standings.loss.total }}</td>
+                                <td>{{ team_standings.win.percentage }}</td>
+                                <td>{{ team_standings.streak }}</td>
+                                <td>{{ team_standings.win.home }}-{{ team_standings.loss.home }}</td>
+                                <td>{{ team_standings.win.away }}-{{ team_standings.loss.away }}</td>
+                                <td>{{ team_standings.gamesBehind }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <script>
+        const switchInput = document.getElementById('conferenceSwitch');
+        const easternTable = document.getElementById('easternConferenceTable');
+        const westernTable = document.getElementById('westernConferenceTable');
+        const easternHeading = document.getElementById('easternConferenceHeading');
+        const westernHeading = document.getElementById('westernConferenceHeading');
+
+        switchInput.addEventListener('change', function() {
+            if (this.checked) {
+                easternTable.style.display = 'none';
+                westernTable.style.display = 'table';
+                easternHeading.style.display = 'none';
+                westernHeading.style.display = 'block';
+            } else {
+                easternTable.style.display = 'table';
+                westernTable.style.display = 'none';
+                easternHeading.style.display = 'block';
+                westernHeading.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

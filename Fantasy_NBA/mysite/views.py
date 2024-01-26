@@ -172,3 +172,34 @@ def leagueleaders(request):
         form = SeasonForm()
 
     return render(request, 'mysite/leagueleaders.html', {'form': form})
+
+
+@login_required
+def standings(request):
+    url = "https://api-nba-v1.p.rapidapi.com/standings"
+    querystring = {"league": "standard", "season": "2023"}
+    headers = {
+        "X-RapidAPI-Key": "1653a1f50amsha7a04d5574bda05p123149jsn718df4a7a999",
+        "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com"
+    }
+
+    try:
+        response = requests.get(url, headers=headers, params=querystring)
+        response.raise_for_status()
+
+        standings_data = response.json()
+
+        if "response" in standings_data:
+            standings = standings_data["response"]
+            rank_list = [rank for rank in range(1, 16)]
+            context = {"standings": standings, "rank_list": rank_list}
+            return render(request, 'mysite/standings.html', context)
+
+        else:
+            error_message = "No standings data available."
+
+    except requests.exceptions.RequestException as e:
+        error_message = f"Error fetching standings: {e}"
+
+    context = {"error_message": error_message}
+    return render(request, 'mysite/standings.html', context)
