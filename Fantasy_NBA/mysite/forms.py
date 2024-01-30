@@ -9,10 +9,41 @@ class PlayerComparisonForm(forms.Form):
 class DateSelectionForm(forms.Form):
     date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
 
-class SeasonForm(forms.Form):
+class NBAStatsForm(forms.Form):
     SEASON_CHOICES = [
-        ('2022-23', '2023-24'),
-        # Add other season choices as needed
+        ("2023-24", "2023-24"),
+        ("2022-23", "2022-23"),
+        ("2021-22", "2021-22"),
+        ("2020-21", "2020-21"),
+        ("2019-20", "2019-20")
     ]
 
-    selected_season = forms.ChoiceField(choices=SEASON_CHOICES, label='Select Season')
+    STAT_CATEGORY_CHOICES = [
+        ("PTS", "Points"),
+        ("REB", "Rebounds"),
+        ("GP", "Games Played"),
+        ("MIN", "Minutes Per Game"),
+        ("FGM", "Field Goals Made"),
+        ("FGA", "Field Goals Attempted"),
+        ("FG_PCT", "Field Goal Percentage"),
+        ("FG3M", "Three-Pointers Made"),
+        ("FG3A", "Three-Pointers Attempted"),
+        ("FG3_PCT", "Three-Point Percentage"),
+        ("FTM", "Free Throws Made"),
+        ("FTA", "Free Throws Attempted"),
+        ("FT_PCT", "Free Throw Percentage"),
+        ("OREB", "Offensive Rebounds"),
+        ("DREB", "Defensive Rebounds"),
+        ("REB", "Total Rebounds"),
+        ("AST", "Assists"),
+        ("STL", "Steals"),
+        ("BLK", "Blocks"),
+        ("TOV", "Turnovers"),
+        ("PF", "Personal Fouls"),
+        ("EFF", "Efficiency"),
+        ("AST_TOV", "Assist to Turnover Ratio"),
+        ("STL_TOV", "Steal to Turnover Ratio"),
+    ]
+
+    season = forms.ChoiceField(choices=SEASON_CHOICES)
+    stat_category = forms.ChoiceField(choices=STAT_CATEGORY_CHOICES)

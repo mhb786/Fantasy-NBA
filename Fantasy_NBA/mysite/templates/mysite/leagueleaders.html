@@ -1,54 +1,93 @@
 {% extends 'mysite/base.html' %}
 
-{% block title %} Player Comparison {% endblock %}
+{% block title %} League Leaders {% endblock %}
 
 {% block content %}
-    <form id="statsForm" method="post" action="{% url 'leagueleaders' %}" class="mb-5">
+
+<div style="margin-top: 100px;"> <!-- Adjust the margin-top as needed -->
+    <h2>League Leaders</h2>
+    <form method="post" action="{% url 'leagueleaders' %}">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <div style="flex: 1;">
+            <label for="id_season">Select Season:</label>
+            {{ form.season }}
+        </div>
+        <div style="flex: 1;">
+            <label for="id_stat_category">Select Stat Category:</label>
+            {{ form.stat_category }}
+        </div>
+        <div style="flex: 1;">
+            <button type="submit">Get Top Players</button>
+        </div>
     </form>
 
-    {% if selected_season %}
-        <div id="playerStats">
-            <h1>Top Players for {{ selected_season }}</h1>
-
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="container">
-                        <h2>Points Per Game</h2>
-                        <table class="table">
-                            <!-- Points Per Game Table Content -->
-                        </table>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="container">
-                        <h2>Assists Per Game</h2>
-                        <table class="table">
-                            <!-- Assists Per Game Table Content -->
-                        </table>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="container">
-                        <h2>Rebounds Per Game</h2>
-                        <table class="table">
-                            <!-- Rebounds Per Game Table Content -->
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+    {% if players_data %}
+        <table style="margin-top: 70px; border-collapse: collapse; width: 100%;">
+            <thead>
+                <tr>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Player</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Team</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Games Played (GP)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Minutes Per Game (MIN)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Field Goals Made (FGM)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Field Goals Attempted (FGA)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Field Goal Percentage (FG_PCT)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Three-Pointers Made (FG3M)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Three-Pointers Attempted (FG3A)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Three-Point Percentage (FG3_PCT)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Free Throws Made (FTM)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Free Throws Attempted (FTA)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Free Throw Percentage (FT_PCT)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Offensive Rebounds (OREB)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Defensive Rebounds (DREB)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Total Rebounds (REB)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Assists (AST)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Steals (STL)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Blocks (BLK)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Turnovers (TOV)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Personal Fouls (PF)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Points (PTS)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Efficiency (EFF)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Assist to Turnover Ratio (AST_TOV)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Steal to Turnover Ratio (STL_TOV)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in players_data %}
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.2 }} ({{ player.4 }})</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.4 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.5 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.6 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.7 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.8 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.9 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.10 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.11 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.12 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.13 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.14 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.15 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.16 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.17 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.18 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.19 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.20 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.21 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.22 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.23 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.24 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.25 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.26 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.27 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ player.28 }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     {% endif %}
 
-    <script>
-        document.getElementById('statsForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent the default form submission
-            document.getElementById('playerStats').style.display = 'block';
-            this.submit(); // Manually submit the form
-        });
-    </script>
+
+</div>
+
 {% endblock %}

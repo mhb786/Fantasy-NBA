@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from .models import NBAPlayer
 from django.core.serializers import serialize
-from .forms import PlayerComparisonForm, SeasonForm
+from .forms import PlayerComparisonForm, NBAStatsForm
 from nba_api.stats.endpoints import playercareerstats
 from nba_api.stats.static import players
 import pandas as pd
@@ -34,14 +34,6 @@ def get_player_stats(player_id, per_mode='Totals', league_id='', season='2023'):
     season_stats = player_stats[player_stats['SEASON_ID'] == f"{season}-{int(season[-2:]) + 1}"]
     return season_stats
 
-from nba_api.stats.library.parameters import (
-    LeagueID,
-    PerMode48,
-    Scope,
-    Season,
-    SeasonTypeAllStar,
-    StatCategoryAbbreviation,
-)
 
 @login_required
 def playercomparison(request):
@@ -131,47 +123,33 @@ def fixtures(request):
     else:
         return render(request, 'mysite/fixtures.html')
 
-def get_top_players(season, stat):
-    league_leaders = LeagueLeaders(
-        league_id=LeagueID.default,
-        per_mode48=PerMode48.default,
-        scope=Scope.default,
-        season=season,
-        season_type_all_star=SeasonTypeAllStar.default,
-        stat_category_abbreviation=stat,
-    )
 
-    response = league_leaders.get_data_frames()
-    top5 = response[0][["PLAYER", stat]][:5]
-    return top5.itertuples(index=False, name=None)
-
-
+from nba_api.stats.endpoints import LeagueLeaders
 
 @login_required
 def leagueleaders(request):
     if request.method == 'POST':
-        form = SeasonForm(request.POST)
-
+        form = NBAStatsForm(request.POST)
         if form.is_valid():
-            selected_season = form.cleaned_data['selected_season']
+            season = form.cleaned_data['season']
+            stat_category = form.cleaned_data['stat_category']
 
-            # Get top players for the selected season
-            top_scorers = get_top_players(selected_season, 'PTS')
-            top_assist_makers = get_top_players(selected_season, 'AST')
-            top_rebounders = get_top_players(selected_season, 'REB')
+            league_leaders = LeagueLeaders(season=season, stat_category_abbreviation=stat_category)
+            data = league_leaders.league_leaders.get_dict()
+            players_data = data["data"][:20]
 
             context = {
-                'selected_season': selected_season,
-                'top_scorers': top_scorers,
-                'top_assist_makers': top_assist_makers,
-                'top_rebounders': top_rebounders,
+                'form': form,
+                'players_data': players_data,
+                'stat_category': stat_category,
+                'season': season,
             }
-
             return render(request, 'mysite/leagueleaders.html', context)
     else:
-        form = SeasonForm()
+        form = NBAStatsForm()
 
-    return render(request, 'mysite/leagueleaders.html', {'form': form})
+    context = {'form': form}
+    return render(request, 'mysite/leagueleaders.html', context)
 
 
 @login_required
