@@ -151,6 +151,9 @@ def leagueleaders(request):
     context = {'form': form}
     return render(request, 'mysite/leagueleaders.html', context)
 
+@login_required
+def games(request):
+    return render(request, 'mysite/games.html')
 
 @login_required
 def standings(request):

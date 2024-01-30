@@ -1,6 +1,6 @@
 {% extends 'mysite/base.html' %}
 
-{% block title %} NBA Standings {% endblock %}
+{% block title %} NBA Games {% endblock %}
 
 {% block content %}
 
@@ -13,15 +13,20 @@
 </style>
 
 <div id="content-container">
-    <div id="wg-api-basketball-standings"
+    <div id="wg-api-basketball-games"
         data-host="api-basketball.p.rapidapi.com"
         data-key="1653a1f50amsha7a04d5574bda05p123149jsn718df4a7a999"
-        data-league="12"
-        data-season="2021-2022"
+        data-date=""
+        data-league=""
+        data-season=""
         data-theme=""
+        data-refresh="15"
+        data-show-toolbar="true"
         data-show-errors="false"
         data-show-logos="true"
-        class="wg_loader">
+        data-modal-game="true"
+        data-modal-standings="true"
+        data-modal-show-logos="true">
     </div>
     <script
         type="module"

@@ -8,5 +8,6 @@ path("", login_required(views.home), name="home"),
 path('playercomparison/', login_required(views.playercomparison), name="playercomparison"),
 path('fixtures/', login_required(views.fixtures), name='fixtures'),
 path('leagueleaders/', login_required(views.leagueleaders), name='leagueleaders'),
-path('standings/', login_required(views.standings), name='standings')
+path('standings/', login_required(views.standings), name='standings'),
+path('games/', login_required(views.games), name='games')
 ]
