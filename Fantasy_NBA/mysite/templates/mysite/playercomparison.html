@@ -19,7 +19,7 @@
 
         #radarChartContainer {
             margin-top: 20px;
-            max-width: 400px;
+            max-width: 600px;  /* Adjusted width for better visibility */
             margin-left: auto;
             margin-right: auto;
         }
@@ -28,11 +28,14 @@
 </head>
 <body>
     <h2>Player Comparison Radar Chart</h2>
-    <canvas id="radarChart" width="400" height="400"></canvas>
+    
+    <div id="radarChartContainer">
+        <canvas id="radarChart" width="400" height="400"></canvas>
+    </div>
 
     <script>
         var data = {
-            labels: ['PPG', 'APG', 'RPG', 'SPG', 'BPG'],
+            labels: [{% for stat_label in selected_stats %}'{{ stat_label }}',{% endfor %}],
             datasets: [
                 {
                     label: '{{ player1_stats.player_name }}',
@@ -40,11 +43,12 @@
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 2,
                     data: [
-                        {{ player1_stats.PPG }},
-                        {{ player1_stats.APG }},
-                        {{ player1_stats.RPG }},
-                        {{ player1_stats.SPG }},
-                        {{ player1_stats.BPG }},
+                        {% for stat_label, stat_value in player1_stats.items %}
+                            {% if not forloop.first %},{% endif %}
+                            {% if not stat_label == 'player_name' %}
+                                {{ stat_value }}
+                            {% endif %}
+                        {% endfor %}
                     ],
                 },
                 {
@@ -53,16 +57,17 @@
                     borderColor: 'rgba(255, 99, 132, 1)',
                     borderWidth: 2,
                     data: [
-                        {{ player2_stats.PPG }},
-                        {{ player2_stats.APG }},
-                        {{ player2_stats.RPG }},
-                        {{ player2_stats.SPG }},
-                        {{ player2_stats.BPG }},
+                        {% for stat_label, stat_value in player2_stats.items %}
+                            {% if not forloop.first %},{% endif %}
+                            {% if not stat_label == 'player_name' %}
+                                {{ stat_value }}
+                            {% endif %}
+                        {% endfor %}
                     ],
                 },
             ]
         };
-
+    
         var options = {
             scale: {
                 ticks: {
@@ -71,7 +76,7 @@
                 }
             }
         };
-
+    
         var ctx = document.getElementById('radarChart').getContext('2d');
         var radarChart = new Chart(ctx, {
             type: 'radar',
@@ -79,8 +84,9 @@
             options: options
         });
     </script>
+    
+    
 </body>
 </html>
-
 
 {% endblock %}

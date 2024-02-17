@@ -3,8 +3,17 @@ from django import forms
 from .models import NBAPlayer
 
 class PlayerComparisonForm(forms.Form):
-    player1 = forms.ModelChoiceField(queryset=NBAPlayer.objects.all(), label='Player 1')
-    player2 = forms.ModelChoiceField(queryset=NBAPlayer.objects.all(), label='Player 2')
+    player1 = forms.ModelChoiceField(queryset=NBAPlayer.objects.all(), label='Select Player 1')
+    player2 = forms.ModelChoiceField(queryset=NBAPlayer.objects.all(), label='Select Player 2')
+
+    # Use the correct keys from the API response
+    stats = ['GP', 'GS', 'MIN', 'FGM', 'FGA', 'FG_PCT',
+             'FG3M', 'FG3A', 'FG3_PCT', 'FTM', 'FTA', 'FT_PCT', 'OREB', 'DREB', 'REB', 'AST',
+             'STL', 'BLK', 'TOV', 'PF', 'PTS']
+    
+    selected_stats = forms.MultipleChoiceField(choices=[(stat, stat) for stat in stats],
+                                               widget=forms.CheckboxSelectMultiple,
+                                               required=True)
 
 class DateSelectionForm(forms.Form):
     date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
@@ -47,3 +56,16 @@ class NBAStatsForm(forms.Form):
 
     season = forms.ChoiceField(choices=SEASON_CHOICES)
     stat_category = forms.ChoiceField(choices=STAT_CATEGORY_CHOICES)
+
+
+from .models import Thread, Post
+
+class ThreadForm(forms.ModelForm):
+    class Meta:
+        model = Thread
+        fields = ['title']
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['content']

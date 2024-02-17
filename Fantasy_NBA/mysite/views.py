@@ -28,7 +28,7 @@ def get_player_id_by_full_name(full_name):
         return None
 
 
-def get_player_stats(player_id, per_mode='Totals', league_id='', season='2023'):
+def get_player_stats(player_id, per_mode='PerGame', league_id='', season='2023'):
     career_stats = playercareerstats.PlayerCareerStats(player_id=player_id, per_mode36=per_mode, league_id_nullable=league_id)
     player_stats = career_stats.get_data_frames()[0]
     season_stats = player_stats[player_stats['SEASON_ID'] == f"{season}-{int(season[-2:]) + 1}"]
@@ -43,55 +43,39 @@ def playercomparison(request):
         if form.is_valid():
             player1 = form.cleaned_data['player1']
             player2 = form.cleaned_data['player2']
+            selected_stats = form.cleaned_data['selected_stats']
 
             player1_name = player1.first_name + " " + player1.last_name
-            player2_name = player2.first_name + " " + player2 .last_name
+            player2_name = player2.first_name + " " + player2.last_name
 
             player1_id = get_player_id_by_full_name(player1_name)
             player2_id = get_player_id_by_full_name(player2_name)
 
-            if player1_id is not None and player2_id is not None:
-                player1_stats = get_player_stats(player1_id)
-                player2_stats = get_player_stats(player2_id)
+            player1_stats = get_player_stats(player1_id)
+            player2_stats = get_player_stats(player2_id)
 
-                if not player1_stats.empty and not player2_stats.empty:
-                    player1_stats_dict = {
-                        'PPG': player1_stats['PTS'].values[0] / player1_stats['GP'].values[0],
-                        'APG': player1_stats['AST'].values[0] / player1_stats['GP'].values[0],
-                        'RPG': player1_stats['REB'].values[0] / player1_stats['GP'].values[0],
-                        'SPG': player1_stats['STL'].values[0] / player1_stats['GP'].values[0],
-                        'BPG': player1_stats['BLK'].values[0] / player1_stats['GP'].values[0],
-                        'player_name': player1_name,
-                    }
+            player1_stats_dict = prepare_player_stats(player1_stats, selected_stats, player1_name)
+            player2_stats_dict = prepare_player_stats(player2_stats, selected_stats, player2_name)
 
-                    player2_stats_dict = {
-                        'PPG': player2_stats['PTS'].values[0] / player2_stats['GP'].values[0],
-                        'APG': player2_stats['AST'].values[0] / player2_stats['GP'].values[0],
-                        'RPG': player2_stats['REB'].values[0] / player2_stats['GP'].values[0],
-                        'SPG': player2_stats['STL'].values[0] / player2_stats['GP'].values[0],
-                        'BPG': player2_stats['BLK'].values[0] / player2_stats['GP'].values[0],
-                        'player_name': player2_name,
-                    }
-
-                    return render(request, 'mysite/playercomparison.html', {
-                        'form': form,
-                        'player1_stats': player1_stats_dict,
-                        'player2_stats': player2_stats_dict,
-                    })
-                else:
-                    error_message = "Error: Unable to retrieve statistics for one or both players."
-            else:
-                error_message = "Error: One or both players not found."
-            
-            return render(request, 'mysite/playercomparison_form.html', {
+            return render(request, 'mysite/playercomparison.html', {
                 'form': form,
-                'error_message': error_message,
+                'player1_stats': player1_stats_dict,
+                'player2_stats': player2_stats_dict,
+                'selected_stats': selected_stats,
             })
-
+        else:
+            pass
     else:
         form = PlayerComparisonForm()
 
     return render(request, 'mysite/playercomparison_form.html', {'form': form})
+
+
+def prepare_player_stats(stats_df, selected_stats, player_name):
+    stats_dict = {'player_name': player_name}
+    for stat in selected_stats:
+        stats_dict[stat] = stats_df[stat].values[0]
+    return stats_dict
 
 
 def get_fixtures_for_date(api_key, date):
@@ -184,3 +168,41 @@ def standings(request):
 
     context = {"error_message": error_message}
     return render(request, 'mysite/standings.html', context)
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy
+from .models import Thread, Post
+from .forms import ThreadForm, PostForm  # Assuming you have these forms.
+
+def thread_list(request):
+    threads = Thread.objects.all()
+    return render(request, 'mysite/thread_list.html', {'threads': threads})
+
+def thread_detail(request, pk):
+    thread = get_object_or_404(Thread, pk=pk)
+    posts = thread.post_set.all()
+    return render(request, 'mysite/thread_detail.html', {'thread': thread, 'posts': posts})
+
+def create_thread(request):
+    if request.method == 'POST':
+        form = ThreadForm(request.POST)
+        if form.is_valid():
+            new_thread = form.save()
+            return redirect('thread_detail', pk=new_thread.pk)  # Redirect to the newly created thread's detail view
+    else:
+        form = ThreadForm()
+    return render(request, 'mysite/create_thread.html', {'form': form})
+
+def create_post(request, pk):
+    thread = get_object_or_404(Thread, pk=pk)
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        if form.is_valid():
+            new_post = form.save(commit=False)
+            new_post.thread = thread
+            new_post.save()
+            return redirect('thread_detail', pk=thread.pk)
+    else:
+        form = PostForm()
+    return render(request, 'mysite/create_post.html', {'form': form, 'thread': thread})

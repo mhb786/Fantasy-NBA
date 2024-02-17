@@ -21,6 +21,16 @@
                         {{ form.player2 }}
                     </div>
 
+                    <div class="form-group">
+                        <label>Select at least 3 stats:</label>
+                        {% for stat in form.selected_stats %}
+                            <div class="form-check">
+                                {{ stat }}
+                                {{ stat.label_tag }}
+                            </div>
+                        {% endfor %}
+                    </div>
+
                     <button type="submit" class="btn btn-primary">Compare Players</button>
                 </form>
             </div>

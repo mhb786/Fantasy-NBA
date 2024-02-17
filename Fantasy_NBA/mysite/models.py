@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 # Create your models here.
 
@@ -38,12 +39,14 @@ class Team(models.Model):
         return self.name
 
 
-class Fixture(models.Model):
-    gamedate = models.DateTimeField()
-    gametime = models.TimeField()
-    hometeam = models.CharField(max_length=255, default='Default Home Team')
-    awayteam = models.CharField(max_length=255, default='Default Away Team')
-    hometeamscore = models.IntegerField(default=0)
-    awayteamscore = models.IntegerField(default=0)
-    hometeam_logo = models.URLField(default='https://example.com/default-home-logo.png')
-    awayteam_logo = models.URLField(default='https://example.com/default-away-logo.png')
+class Thread(models.Model):
+    title = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def get_absolute_url(self): 
+        return reverse('thread_detail', kwargs={'pk': self.pk})
+
+class Post(models.Model):
+    thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
