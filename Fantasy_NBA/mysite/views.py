@@ -206,3 +206,16 @@ def create_post(request, pk):
     else:
         form = PostForm()
     return render(request, 'mysite/create_post.html', {'form': form, 'thread': thread})
+
+def news(request):
+    url = "https://nba-latest-news.p.rapidapi.com/articles"
+
+    headers = {
+        "X-RapidAPI-Key": "1653a1f50amsha7a04d5574bda05p123149jsn718df4a7a999",
+        "X-RapidAPI-Host": "nba-latest-news.p.rapidapi.com"
+    }
+
+    response = requests.get(url, headers=headers)
+    news_data = response.json()
+
+    return render(request, 'mysite/news.html', {'news_data': news_data})

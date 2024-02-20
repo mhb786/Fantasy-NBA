@@ -1,0 +1,21 @@
+{% extends 'mysite/base.html' %}
+
+{% block title %} News {% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-5">
+    <h1 class="mb-4">Recent News</h1>
+    <div class="row">
+        <div class="col-md-8">
+            <ul class="list-group">
+                {% for news_item in news_data %}
+                <li class="list-group-item">
+                    <a href="{{ news_item.url }}" target="_blank">{{ news_item.title }}</a>
+                    <p class="text-muted">Source: {{ news_item.source }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
