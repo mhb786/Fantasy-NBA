@@ -1,0 +1,25 @@
+{% extends 'mysite/base.html' %}
+
+{% block title %} My Profile {% endblock %}
+
+{% block content %}
+
+<body>
+    <h1>Welcome to your profile page</h1>
+    <img src="{{ profile.profile_picture.url }}" alt="Profile Picture">
+    <p>Username: {{ user.username }}</p>
+    <p>Email: {{ user.email }}</p>
+    <p>Bio: {{ profile.bio }}</p>
+    <p>Favorite Team: {{ profile.favorite_team }}</p>
+
+    <!-- Add form for updating profile picture -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="profile_picture">Profile Picture:</label>
+        <input type="file" name="profile_picture" id="profile_picture">
+        <button type="submit">Upload Profile Picture</button>
+    </form>
+</body>
+
+
+{% endblock %}

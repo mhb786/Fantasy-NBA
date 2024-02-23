@@ -15,4 +15,5 @@ path('forum', views.thread_list, name='thread_list'),
 path('thread/<int:pk>/', views.thread_detail, name='thread_detail'),
 path('new_thread/', views.create_thread, name='create_thread'),
 path('thread/<int:pk>/new_post/', views.create_post, name='create_post'),
+path('profile/', views.profile, name='profile'),
 ]

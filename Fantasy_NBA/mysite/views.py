@@ -44,6 +44,7 @@ def playercomparison(request):
             player1 = form.cleaned_data['player1']
             player2 = form.cleaned_data['player2']
             selected_stats = form.cleaned_data['selected_stats']
+            print(selected_stats)
 
             player1_name = player1.first_name + " " + player1.last_name
             player2_name = player2.first_name + " " + player2.last_name
@@ -98,7 +99,7 @@ def get_fixtures_for_date(api_key, date):
 
 @login_required
 def fixtures(request):
-    api_key = "1653a1f50amsha7a04d5574bda05p123149jsn718df4a7a999"  # Replace with your actual RapidAPI key
+    api_key = "1653a1f50amsha7a04d5574bda05p123149jsn718df4a7a999" 
 
     if request.method == 'POST':
         specific_date = request.POST.get('date')
@@ -189,7 +190,7 @@ def create_thread(request):
         form = ThreadForm(request.POST)
         if form.is_valid():
             new_thread = form.save()
-            return redirect('thread_detail', pk=new_thread.pk)  # Redirect to the newly created thread's detail view
+            return redirect('thread_detail', pk=new_thread.pk)
     else:
         form = ThreadForm()
     return render(request, 'mysite/create_thread.html', {'form': form})
@@ -219,3 +220,19 @@ def news(request):
     news_data = response.json()
 
     return render(request, 'mysite/news.html', {'news_data': news_data})
+
+
+from .models import Profile
+from .forms import ProfilePictureForm
+
+@login_required
+def profile(request):
+    profile = Profile.objects.get(user=request.user)
+    if request.method == 'POST':
+        form = ProfilePictureForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = ProfilePictureForm(instance=profile)
+    return render(request, 'profile.html', {'profile': profile, 'form': form})

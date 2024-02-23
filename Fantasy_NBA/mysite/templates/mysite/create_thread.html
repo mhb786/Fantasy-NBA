@@ -3,12 +3,15 @@
 {% block title %} Create Thread {% endblock %}
 
 {% block content %}
-  <h1>Create New Thread</h1>
+  <div style="padding-top: 40px;">
+    <h1>Create New Thread</h1>
 
-  <form method="post" action="{% url 'create_thread' %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit</button>
-  </form>
+    <form method="post" action="{% url 'create_thread' %}">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Submit</button>
+    </form>
+  </div>
 {% endblock %}
+
  

@@ -50,3 +50,17 @@ class Post(models.Model):
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+from django.contrib.auth.models import User
+def default_profile_picture():
+    return "path/to/default_profile_picture.jpg"  # Specify the path to your default profile picture
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(blank=True)
+    favorite_team = models.CharField(max_length=100, blank=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures', default=default_profile_picture)
+
+    def __str__(self):
+        return self.user.username

@@ -3,12 +3,12 @@
 {% block title %}Player Comparison Form{% endblock %}
 
 {% block content %}
-    <div style="margin-top: 70px; margin-bottom: 20px; margin-left: 20px"> <!-- Increase the top margin -->
-        <h2 class="mb-4">Player Comparison</h2>
+    <div class="container">
+        <div class="row mt-5 pt-5">
+            <div class="col-md-8 offset-md-2">
+                <h2 class="text-center mb-4">Player Comparison</h2>
 
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <form method="post" action="{% url 'playercomparison' %}" class="form">
+                <form method="post" action="{% url 'playercomparison' %}" class="needs-validation" novalidate>
                     {% csrf_token %}
 
                     <div class="form-group">
@@ -23,15 +23,17 @@
 
                     <div class="form-group">
                         <label>Select at least 3 stats:</label>
-                        {% for stat in form.selected_stats %}
-                            <div class="form-check">
-                                {{ stat }}
-                                {{ stat.label_tag }}
-                            </div>
-                        {% endfor %}
+                        <div class="form-check">
+                            {% for stat in form.selected_stats.field.choices reversed %}
+                                <div class="form-check form-check-inline">
+                                    <input type="checkbox" name="selected_stats" value="{{ stat.0 }}" id="id_selected_stats_{{ forloop.counter0 }}" class="form-check-input">
+                                    <label class="form-check-label" for="id_selected_stats_{{ forloop.counter0 }}">{{ stat.1 }}</label>
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Compare Players</button>
+                    <button type="submit" class="btn btn-primary btn-block">Compare Players</button>
                 </form>
             </div>
         </div>
