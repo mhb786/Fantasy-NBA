@@ -235,4 +235,4 @@ def profile(request):
             return redirect('profile')
     else:
         form = ProfilePictureForm(instance=profile)
-    return render(request, 'profile.html', {'profile': profile, 'form': form})
+    return render(request, 'mysite/profile.html', {'profile': profile, 'form': form})

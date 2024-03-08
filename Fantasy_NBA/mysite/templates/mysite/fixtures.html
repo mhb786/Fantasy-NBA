@@ -23,6 +23,7 @@
         .fixtures-container {
             width: 80%;
             margin: 20px auto;
+            text-align: center; /* Center align the fixtures container */
         }
 
         .fixture {
@@ -33,6 +34,8 @@
             border: 1px solid #ddd;
             padding: 15px;
             margin-bottom: 15px;
+            width: 100%; /* Make each fixture take the full width */
+            box-sizing: border-box; /* Include padding and border in the width calculation */
         }
 
         .team-info {
@@ -69,12 +72,14 @@
                     <div class="team-info">
                         <img src="{{ fixture.teams.home.logo }}" alt="{{ fixture.teams.home.name }} logo">
                         <p>{{ fixture.teams.home.name }}</p>
-                        <span class="score">{{ fixture.scores.home.points }} - {{ fixture.scores.visitors.points }}</span>
+                        {% if fixture.scores.home.points is not None and fixture.scores.visitors.points is not None %}
+                            <span class="score">{{ fixture.scores.home.points }} - {{ fixture.scores.visitors.points }}</span>
+                        {% endif %}
                         <p>{{ fixture.teams.visitors.name }}</p>
                         <img src="{{ fixture.teams.visitors.logo }}" alt="{{ fixture.teams.visitors.name }} logo">
                     </div>
                     <p class="additional-info">
-                        <span>Arena: {{ fixture.arena.name }} ({{ fixture.arena.city }}, {{ fixture.arena.state }}, {{ fixture.arena.country }})</span>
+                        <span>Arena: {{ fixture.arena.name }} ({{ fixture.arena.city }}, {{ fixture.arena.state }})</span>
                     </p>
                 </div>
             {% endfor %}
@@ -83,3 +88,4 @@
         {% endif %}
     </div>
 {% endblock %}
+    
