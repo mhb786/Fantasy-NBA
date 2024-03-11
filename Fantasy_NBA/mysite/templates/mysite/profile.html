@@ -4,15 +4,40 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
-<div class="content-section" style="padding-top: 30px;">
-    <div class="media">
-      <img class="rounded-circle account-img" src={{ user.profile.profile_picture.url }}>
-      <div class="media-body">
-        <h2 class="account-heading">{{ user.username }}</h2>
-        <p class="text-secondary">{{ user.email }}</p>
-      </div>
-    </div>
-    
-  </div>
+<style>
+    .account-img {
+        width: 150px; /* Set the desired width */
+        height: 150px; /* Set the desired height */
+        object-fit: cover; /* Crop image to cover container */
+        object-position: center; /* Center the cropped image */
+        border-radius: 50%; /* Make it rounded */   
+    }
+</style>
 
-  {% endblock %}
+<div class="content-section" style="margin-top: 90px;">
+    <div class="media">
+        <img class="rounded-circle account-img" src="{{ user.profile.profile_picture.url }}">
+        <div class="media-body">
+            <h2 style="margin-left:30px;" class="account-heading">{{ user.username }}</h2>
+            <p style="margin-left:30px;" class="text-secondary">{{ user.email }}</p>
+            {% if user.profile.bio %}
+                <p style="margin-left:30px;">{{ user.profile.bio }}</p>
+            {% else %}
+                <p style="margin-left:30px;"></p>
+            {% endif %}
+        </div>
+    </div>
+    <form method="POST" enctype="multipart/form-data" style="margin-top: 30px;">
+        {% csrf_token %}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Profile Info</legend>
+            {{ u_form|crispy }}
+            {{ p_form|crispy }}
+        </fieldset>
+        <div class="form-group">
+            <button class="btn btn-outline-info" type="submit">Update</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

@@ -32,7 +32,7 @@ class Team(models.Model):
     logo = models.URLField()
     all_star = models.BooleanField(default=False)
     nba_franchise = models.BooleanField(default=True)
-    conference = models.CharField(max_length=50, default='')  # Provide default value
+    conference = models.CharField(max_length=50, default='')
     division = models.CharField(max_length=50, default='')
 
     def __str__(self):
@@ -64,7 +64,7 @@ def default_profile_picture():
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
-    favorite_team = models.CharField(max_length=100, blank=True)
+    favorite_team = models.ForeignKey('Team', on_delete=models.SET_NULL, null=True, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pictures', default=default_profile_picture)
     
     def __str__(self):

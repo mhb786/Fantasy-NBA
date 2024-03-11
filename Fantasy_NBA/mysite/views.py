@@ -174,7 +174,7 @@ def standings(request):
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from .models import Thread, Post
-from .forms import ThreadForm, PostForm  # Assuming you have these forms.
+from .forms import ThreadForm, PostForm
 
 def thread_list(request):
     threads = Thread.objects.all()
@@ -222,17 +222,29 @@ def news(request):
     return render(request, 'mysite/news.html', {'news_data': news_data})
 
 
-from .models import Profile
-from .forms import ProfilePictureForm
+from .models import Profile, Team
+from django.contrib import messages
+from .forms import ProfileUpdateForm, UserUpdateForm
 
 @login_required
 def profile(request):
-    profile = Profile.objects.get(user=request.user)
     if request.method == 'POST':
-        form = ProfilePictureForm(request.POST, request.FILES, instance=profile)
-        if form.is_valid():
-            form.save()
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            profile = p_form.save(commit=False)
+            profile.user = request.user
+            profile.save()
+            messages.success(request, 'Your account has been updated!')
             return redirect('profile')
     else:
-        form = ProfilePictureForm(instance=profile)
-    return render(request, 'mysite/profile.html', {'profile': profile, 'form': form})
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=request.user.profile)
+    teams = Team.objects.all()  # Assuming you have a Team model
+    context = {
+        'u_form': u_form,
+        'p_form': p_form,
+        'teams': teams
+    }
+    return render(request, 'mysite/profile.html', context)
