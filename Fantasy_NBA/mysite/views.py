@@ -185,16 +185,22 @@ def thread_detail(request, pk):
     posts = thread.post_set.all()
     return render(request, 'mysite/thread_detail.html', {'thread': thread, 'posts': posts})
 
+@login_required
 def create_thread(request):
     if request.method == 'POST':
         form = ThreadForm(request.POST)
         if form.is_valid():
-            new_thread = form.save()
+            new_thread = form.save(commit=False)
+            new_thread.creator = request.user  # Set the creator to the currently authenticated user
+            new_thread.save()
             return redirect('thread_detail', pk=new_thread.pk)
     else:
         form = ThreadForm()
     return render(request, 'mysite/create_thread.html', {'form': form})
 
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def create_post(request, pk):
     thread = get_object_or_404(Thread, pk=pk)
     if request.method == 'POST':
@@ -202,11 +208,13 @@ def create_post(request, pk):
         if form.is_valid():
             new_post = form.save(commit=False)
             new_post.thread = thread
+            new_post.author = request.user
             new_post.save()
             return redirect('thread_detail', pk=thread.pk)
     else:
         form = PostForm()
     return render(request, 'mysite/create_post.html', {'form': form, 'thread': thread})
+
 
 def news(request):
     url = "https://nba-latest-news.p.rapidapi.com/articles"

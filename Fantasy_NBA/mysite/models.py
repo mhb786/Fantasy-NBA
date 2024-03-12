@@ -39,17 +39,22 @@ class Team(models.Model):
         return self.name
 
 
+from django.contrib.auth.models import User
+
 class Thread(models.Model):
     title = models.CharField(max_length=200)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='threads', default=1)    
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def get_absolute_url(self): 
+    def get_absolute_url(self):
         return reverse('thread_detail', kwargs={'pk': self.pk})
 
 class Post(models.Model):
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts', default=1)  # Default to the superuser (ID=1)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
 
 
 from django.contrib.auth.models import User
