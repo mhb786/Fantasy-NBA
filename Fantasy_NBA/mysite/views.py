@@ -177,7 +177,13 @@ from .models import Thread, Post
 from .forms import ThreadForm, PostForm
 
 def thread_list(request):
+    query = request.GET.get('q')
     threads = Thread.objects.all()
+
+    if query:
+        # Filter threads based on the search query
+        threads = threads.filter(title__icontains=query)
+
     return render(request, 'mysite/thread_list.html', {'threads': threads})
 
 def thread_detail(request, pk):

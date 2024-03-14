@@ -3,11 +3,10 @@
 {% block title %} Thread List {% endblock %}
 
 {% block content %}
-
 <style>
   .container {
     margin: 20px;
-    padding-top: 20px;  
+    padding-top: 20px;
   }
   
   .thread-list {
@@ -42,24 +41,48 @@
     border-radius: 50%;
     margin-right: 10px;
   }
+
+  /* Adjustments for the layout */
+  .search-bar {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .search-input {
+    flex-grow: 1; /* Take up remaining space */
+  }
+
+  .search-button {
+    height: auto; /* Make button height auto */
+    margin-left: 10px; /* Add margin to separate from input */
+  }
 </style>
 
-  <div class="container">
-    <h1>Thread List</h1>
-    <div class="thread-list">
-      <a href="{% url 'create_thread' %}" class="btn btn-primary mb-3">Create New Thread</a>
+<div class="container">
+  <h1>Thread List</h1>
+
+  <!-- Search Bar -->
+  <form method="GET" action="{% url 'thread_list' %}" class="search-bar">
+    <input type="text" name="q" placeholder="Search threads..." class="search-input">
+    <button type="submit" class="btn btn-primary search-button">Search</button>
+  </form>
+
+  <div class="thread-list">
+    <a href="{% url 'create_thread' %}" class="btn btn-primary mb-3">Create New Thread</a>
     <div class="thread-list">
       {% for thread in threads %}
       <div class="thread">
-          <h2><a href="{{ thread.get_absolute_url }}">{{ thread.title }}</a></h2>
-          <div class="creator-info">
-              <img class="profile-picture" src="{{ thread.creator.profile.profile_picture.url }}" alt="{{ thread.creator.username }}">
-              <p style="padding-top: 10px;" class="creator-name">Created by: {{ thread.creator.username }}</p>
-          </div>
-          <p style="padding-top: 10px;">Created at: {{ thread.created_at }}</p>
+        <h2><a href="{{ thread.get_absolute_url }}">{{ thread.title }}</a></h2>
+        <div class="creator-info">
+          <img class="profile-picture" src="{{ thread.creator.profile.profile_picture.url }}" alt="{{ thread.creator.username }}">
+          <p style="padding-top: 10px;" class="creator-name">Created by: {{ thread.creator.username }}</p>
+        </div>
+        <p style="padding-top: 10px;">Created at: {{ thread.created_at }}</p>
       </div>
       {% endfor %}
-
-    </div>    
+    </div>
   </div>
+</div>
 {% endblock %}
