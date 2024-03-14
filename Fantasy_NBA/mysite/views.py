@@ -12,8 +12,28 @@ import requests
 
 
 @login_required
-def home(response):
-    return render(response, "mysite/home.html", {})
+def home(request):
+    if request.user.is_authenticated:
+        url = "https://nba-latest-news.p.rapidapi.com/articles"
+        favorite_team = request.user.profile.favorite_team.name.split()[-1]  # Extract last name
+        querystring = {"team": favorite_team}
+
+        headers = {
+            "X-RapidAPI-Key": "1653a1f50amsha7a04d5574bda05p123149jsn718df4a7a999",
+            "X-RapidAPI-Host": "nba-latest-news.p.rapidapi.com"
+        }
+
+        response = requests.get(url, headers=headers, params=querystring)
+        if response.status_code == 200:
+            news_data = response.json()
+            nba_news = news_data[:5]
+        else:
+            nba_news = []
+
+        return render(request, 'mysite/home.html', {'nba_news': nba_news, 'favorite_team': favorite_team})
+    else:
+        return render(request, 'mysite/home.html')
+
 
 def get_player_id_by_full_name(full_name):
     player_list = players.get_players()
@@ -223,6 +243,7 @@ def create_post(request, pk):
 
 
 def news(request):
+    player_name = request.GET.get('q', '')
     url = "https://nba-latest-news.p.rapidapi.com/articles"
 
     headers = {
@@ -230,7 +251,9 @@ def news(request):
         "X-RapidAPI-Host": "nba-latest-news.p.rapidapi.com"
     }
 
-    response = requests.get(url, headers=headers)
+    querystring = {"player": player_name} 
+
+    response = requests.get(url, headers=headers, params=querystring)
     news_data = response.json()
 
     return render(request, 'mysite/news.html', {'news_data': news_data})

@@ -5,7 +5,16 @@
 {% block content %}
 <div class="container mt-5 pt-5">
     <h1 class="mb-4">Recent News</h1>
-    <div class="row">
+    <!-- Search Bar -->
+    <form method="GET" action="{% url 'news' %}" class="mb-4">
+        <div class="input-group">
+            <input type="text" class="form-control" name="q" placeholder="Search players...">
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </div>
+    </form>
+    <div style="padding-bottom: 20px;" class="row">
         <div class="col-md-8">
             <ul class="list-group">
                 {% for news_item in news_data %}

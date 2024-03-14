@@ -3,60 +3,46 @@
 {% block title %} Home {% endblock %}
 
 {% block content %}
-<!-- base.html -->
-{% if user.is_authenticated %}
-    <style type="text/css">
-    h1 {
-    margin-top: 50px;
-    }
-    </style>
-    <main style="padding-top: 50px;" role="main">
-        <div class="jumbotron">
-            <div class="container">
-                <h1 class="display-3">Welcome to Your Fantasy NBA Assistant</h1>
-                <p>This is a template for a simple marketing or informational website. It includes a large callout called a
-                    jumbotron and three supporting pieces of content. Use it as a starting point to create something more
-                    unique.</p>
-                <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
+<style type="text/css">
+h1 {
+margin-top: 10px;
+}
+</style>
+<main style="padding-top: 50px;" role="main">
+    <div class="jumbotron">
+        <div class="container">
+            <h1 class="display-3">Welcome to Your Fantasy NBA Assistant</h1>
+            <p>This is your ultimate tool for managing your fantasy NBA team. Get player comparisons, stay updated with the latest news about your favorite team, and connect with other fans in the forum.</p>
+            <p><a class="btn btn-primary btn-lg" href="#" role="button">Go to Team Builder &raquo;</a></p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h2>Player Comparison</h2>
+                <p>Compare player statistics side by side and make informed decisions for your fantasy team.</p>
+                <p><a class="btn btn-secondary" href="/playercomparison" role="button">View details &raquo;</a></p>
+            </div>
+            <div class="col-md-4">
+                <h2>{{ favorite_team }} News</h2>
+                <ul>
+                    {% for news_item in nba_news %}
+                        <li><a href="{{ news_item.url }}">{{ news_item.title }}</a></li>
+                    {% endfor %}
+                </ul>
+                <p><a class="btn btn-secondary" href="/news" role="button">View all news &raquo;</a></p>
+            </div>
+            <div class="col-md-4">
+                <h2>Forum Page</h2>
+                <p>Connect with other fans, discuss strategies, and share insights in our forum.</p>
+                <p><a class="btn btn-secondary" href="/forum" role="button">Visit forum &raquo;</a></p>
             </div>
         </div>
 
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h2>Heading</h2>
-                    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor
-                        mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna
-                        mollis euismod. Donec sed odio dui. </p>
-                    <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
-                </div>
-                <div class="col-md-4">
-                    <h2>Heading</h2>
-                    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor
-                        mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna
-                        mollis euismod. Donec sed odio dui. </p>
-                    <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
-                </div>
-                <div class="col-md-4">
-                    <h2>Heading</h2>
-                    <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula
-                        porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh,
-                        ut fermentum massa justo sit amet risus.</p>
-                    <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
-                </div>
-            </div>
+        <hr>
 
-            <hr>
+    </div>
 
-        </div> <!-- /container -->
-
-    </main>
-
-    <footer class="container">
-        <p>&copy; Company 2017-2020</p>
-    </footer>
-{% else %}
-    {# Display content for non-logged-in users #}
-    <p>Please log in to access the content.</p>
-{% endif %}
+</main>
 {% endblock %}
