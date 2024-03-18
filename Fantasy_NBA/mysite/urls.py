@@ -17,6 +17,8 @@ path('thread/<int:pk>/', login_required(views.thread_detail), name='thread_detai
 path('new_thread/', login_required(views.create_thread), name='create_thread'),
 path('thread/<int:pk>/new_post/', login_required(views.create_post), name='create_post'),
 path('profile/', login_required(views.profile), name='profile'),
+path('teambuilder/', login_required(views.teambuilder), name='teambuilder'),
+path('teambuilder_update/', login_required(views.teambuilder_update), name='teambuilder_update'),
 ]
 
 if settings.DEBUG:

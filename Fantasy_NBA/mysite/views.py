@@ -285,3 +285,30 @@ def profile(request):
         'teams': teams
     }
     return render(request, 'mysite/profile.html', context)
+
+from .models import FantasyTeam
+
+@login_required
+def teambuilder(request):
+    fantasy_team = FantasyTeam.objects.get(user=request.user)
+    starters = [fantasy_team.player1, fantasy_team.player2, fantasy_team.player3, fantasy_team.player4, fantasy_team.player5]
+    bench_players = [fantasy_team.player6, fantasy_team.player7, fantasy_team.player8, fantasy_team.player9, fantasy_team.player10]
+
+    return render(request, 'mysite/teambuilder.html', {'starters': starters, 'bench_players': bench_players})
+
+from .forms import UpdateTeamForm
+
+@login_required
+def teambuilder_update(request):
+    user = request.user
+    fantasy_team = FantasyTeam.objects.get(user=user)
+
+    if request.method == 'POST':
+        form = UpdateTeamForm(request.POST, instance=fantasy_team)
+        if form.is_valid():
+            form.save()
+            return redirect('teambuilder')  # Redirect the user to the team builder page
+    else:
+        form = UpdateTeamForm(instance=fantasy_team)
+
+    return render(request, 'mysite/teambuilder_update.html', {'form': form})

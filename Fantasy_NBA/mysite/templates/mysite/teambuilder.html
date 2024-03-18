@@ -1,0 +1,118 @@
+{% extends 'mysite/base.html' %}
+
+{% block title %} Team Builder {% endblock %}
+
+{% block content %}
+<div id="team-builder-container">
+  <div id="team-sheet">
+    <h2 style="padding-bottom: 50px;" >Your Fantasy Team</h2>
+    <div id="formation">
+      <div id="starters">
+        <h3>Starters </h3>
+        <div class="formation-row">
+          <div class="player-slot">{{ starters.0.first_name }} {{ starters.0.last_name }}</div>
+          <div class="player-slot">{{ starters.1.first_name }} {{ starters.1.last_name }}</div>
+          <div class="player-slot">{{ starters.2.first_name }} {{ starters.2.last_name }}</div>
+        </div>
+        <div class="formation-row">
+          <div class="player-slot">{{ starters.3.first_name }} {{ starters.3.last_name }}</div>
+          <div class="player-slot">{{ starters.4.first_name }} {{ starters.4.last_name }}</div>
+        </div>
+      </div>
+      <div id="bench">
+        <h3>Bench </h3>
+        <div class="formation-row">
+          {% for player in bench_players|slice:":3" %}
+            <div class="slot">{{ player.first_name }} {{ player.last_name }}</div>
+          {% endfor %}
+        </div>
+        <div class="formation-row">
+          {% for player in bench_players|slice:"3:" %}
+            <div class="slot">{{ player.first_name }} {{ player.last_name }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<a href="{% url 'teambuilder_update' %}" class="update-team-button">Update Team</a>
+
+<style>
+  /* Styling for slots */
+  #team-builder-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  #team-sheet {
+    text-align: center;
+  }
+
+  #formation {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  #starters, #bench {
+    flex-basis: 45%;
+    margin: 0 2%;
+    padding-right: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .formation-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .player-slot, .slot {
+    width: 120px; /* Adjust width based on desired size */
+    height: 120px; /* Ensure all slots are the same size */
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    margin-right: 10px;
+  }
+
+  .player-slot:last-child, .slot:last-child {
+    margin-right: 0;
+  }
+
+  /* Styling for update team button */
+  .update-team-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+  }
+  .update-team-button {
+    position: absolute;
+    top: 100px;
+    right: 50px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+  }
+</style>
+{% endblock %}

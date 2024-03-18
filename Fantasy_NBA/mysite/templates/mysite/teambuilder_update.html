@@ -1,0 +1,70 @@
+{% extends 'mysite/base.html' %}
+
+{% block title %} Update Fantasy Team {% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div id="update-team-container">
+  <h2>Update Your Fantasy Team</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="player-section">
+      <h3>Starters:</h3>
+      {{ form.player1|as_crispy_field }}
+      {{ form.player2|as_crispy_field }}
+      {{ form.player3|as_crispy_field }}
+      {{ form.player4|as_crispy_field }}
+      {{ form.player5|as_crispy_field }}
+    </div>
+    <div class="player-section">
+      <h3>Bench:</h3>
+      {{ form.player6|as_crispy_field }}
+      {{ form.player7|as_crispy_field }}
+      {{ form.player8|as_crispy_field }}
+      {{ form.player9|as_crispy_field }}
+      {{ form.player10|as_crispy_field }}
+    </div>
+    <button type="submit" class="btn btn-primary">Update Team</button>
+  </form>
+</div>
+
+<style>
+    #update-team-container {
+        margin: 100px auto 50px;
+        max-width: 600px;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+      }
+      
+      .player-section {
+        margin-bottom: 20px;
+      }
+      
+      .player-section h3 {
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+      
+      input.select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      
+      button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      
+      button:hover {
+        background-color: #0056b3;
+      }      
+</style>
+{% endblock %}

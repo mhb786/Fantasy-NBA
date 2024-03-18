@@ -11,7 +11,7 @@ class NBAPlayer(models.Model):
 
     PPG = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
     APG = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
-    RPG = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
+    RPG = models.   DecimalField(max_digits=5, decimal_places=2, default=0.0)
     SPG = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
     BPG = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
     FG_PCT = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
@@ -56,12 +56,39 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+
+
+class FantasyTeam(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    player1 = models.ForeignKey(NBAPlayer, related_name='player1_fantasy_team', on_delete=models.SET_NULL, null=True, blank=True)
+    player2 = models.ForeignKey(NBAPlayer, related_name='player2_fantasy_team', on_delete=models.SET_NULL, null=True, blank=True)
+    player3 = models.ForeignKey(NBAPlayer, related_name='player3_fantasy_team', on_delete=models.SET_NULL, null=True, blank=True)
+    player4 = models.ForeignKey(NBAPlayer, related_name='player4_fantasy_team', on_delete=models.SET_NULL, null=True, blank=True)
+    player5 = models.ForeignKey(NBAPlayer, related_name='player5_fantasy_team', on_delete=models.SET_NULL, null=True, blank=True)
+    player6 = models.ForeignKey(NBAPlayer, related_name='player6_fantasy_team', on_delete=models.SET_NULL, null=True, blank=True)
+    player7 = models.ForeignKey(NBAPlayer, related_name='player7_fantasy_team', on_delete=models.SET_NULL, null=True, blank=True)
+    player8 = models.ForeignKey(NBAPlayer, related_name='player8_fantasy_team', on_delete=models.SET_NULL, null=True, blank=True)
+    player9 = models.ForeignKey(NBAPlayer, related_name='player9_fantasy_team', on_delete=models.SET_NULL, null=True, blank=True)
+    player10 = models.ForeignKey(NBAPlayer, related_name='player10_fantasy_team', on_delete=models.SET_NULL, null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['player1', 'player2', 'player3', 'player4', 'player5', 'player6', 'player7', 'player8', 'player9', 'player10'], name='unique_players')
+        ]
+        
+    def __str__(self):
+        return f"{self.user.username}'s Fantasy Team"
+
+@receiver(post_save, sender=User)
+def create_fantasy_team(sender, instance, created, **kwargs):
+    if created:
+        FantasyTeam.objects.create(user=instance)
+
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-
 
 def default_profile_picture():
     return "default_profile.jpg"

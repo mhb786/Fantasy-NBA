@@ -88,3 +88,11 @@ class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['bio', 'favorite_team', 'profile_picture']
+
+from django import forms
+from .models import NBAPlayer, FantasyTeam
+
+class UpdateTeamForm(forms.ModelForm):
+    class Meta:
+        model = FantasyTeam
+        fields = ['player1', 'player2', 'player3', 'player4', 'player5', 'player6', 'player7', 'player8', 'player9', 'player10']
