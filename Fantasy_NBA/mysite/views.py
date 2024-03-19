@@ -312,3 +312,10 @@ def teambuilder_update(request):
         form = UpdateTeamForm(instance=fantasy_team)
 
     return render(request, 'mysite/teambuilder_update.html', {'form': form})
+
+@login_required
+def delete_thread(request, pk):
+    thread = get_object_or_404(Thread, pk=pk)
+    if thread.creator == request.user:
+        thread.delete()
+    return redirect('forum')

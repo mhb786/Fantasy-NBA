@@ -4,12 +4,18 @@
 
 {% block content %}
 <style>
+  .container {
+    padding-right: 0;
+    padding-left: 0;
+  }
+
   .creator-info, .post-meta {
     display: flex;
     align-items: center;
+    justify-content: space-between; /* Align items and add space between them */
     margin-bottom: 10px;
   }
-  
+
   .profile-picture {
     width: 50px;
     height: 50px;
@@ -17,18 +23,33 @@
     margin-right: 10px;
     object-fit: cover; /* Ensures the image is cropped to fit */
   }
-  
+
   .thread-detail {
     margin-bottom: 20px;
+    position: relative; /* Set position relative for positioning delete button */
   }
-  
+
+  .delete-thread-btn {
+    background-color: #dc3545; /* Red color */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    position: absolute; /* Position the button absolutely */
+    top: 0; /* Align to the top */
+    right: 0; /* Align to the right */
+  }
+
   .post {
     border: 1px solid #ccc;
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 10px;
+    width: 90vw; /* Set the width of posts to 90% of viewport width */
+    box-sizing: border-box; /* Ensure padding and border are included in width */
   }
-  
+
   .post p {
     margin-bottom: 5px;
   }
@@ -40,7 +61,7 @@
 
   .post-content {
     display: flex;
-    align-items: center;
+    align-items: flex-start; /* Align items to the top */
   }
 
   .post-content img {
@@ -48,37 +69,44 @@
   }
 </style>
 
-  <div class="container" style="padding-top: 50px;">
-    <div class="row">
-      <div class="col-md-8">
-        <div class="thread-detail">
-          <h1>{{ thread.title }}</h1>
-          {% for post in thread.post_set.all %}
-            <div class="post">
-              <div class="post-content">
-                <img class="profile-picture" src="{{ post.author.profile.profile_picture.url }}" alt="{{ post.author.username }}">
-                <div>
-                  <p class="author-name">{{ post.author.username }}</p>
-                  <p>{{ post.content }}</p>
-                </div>
-              </div>
-              <p class="text-muted">Posted on {{ post.created_at }}</p>
-            </div>
-          {% endfor %}
+<div class="container" style="padding-top: 50px;">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="thread-detail">
+        <div class="creator-info">
+          <h1 style="padding-bottom: 30px;">{{ thread.title }}</h1>
+          {% if user.is_authenticated and thread.creator == user %}
+            <form method="post" action="{% url 'delete_thread' pk=thread.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="delete-thread-btn">Delete Thread</button>
+            </form>
+          {% endif %}
         </div>
-
-        <hr>
-
-        <h3>Add New Post</h3>
-        <form method="post" action="{% url 'create_post' pk=thread.pk %}">
-          {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit" class="btn btn-primary">Add</button>
-        </form>
+        {% for post in thread.post_set.all %}
+          <div class="post">
+            <div class="post-content">
+              <img class="profile-picture" src="{{ post.author.profile.profile_picture.url }}" alt="{{ post.author.username }}">
+              <div>
+                <p class="author-name">{{ post.author.username }}</p>
+                <p>{{ post.content }}</p>
+              </div>
+            </div>
+            <p class="text-muted">Posted on {{ post.created_at }}</p>
+          </div>
+        {% endfor %}
       </div>
-      <div class="col-md-4">
-        <!-- You can add any additional information or features related to the thread here -->
-      </div>
+
+      <hr>
+
+      <h3>Add New Post</h3>
+      <form method="post" action="{% url 'create_post' pk=thread.pk %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Add</button>
+      </form>
+    </div>
+    <div class="col-md-4">
     </div>
   </div>
+</div>
 {% endblock %}
