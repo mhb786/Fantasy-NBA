@@ -195,6 +195,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from .models import Thread, Post
 from .forms import ThreadForm, PostForm
+from django.db.models import Count
 
 def thread_list(request):
     query = request.GET.get('q')
@@ -204,7 +205,37 @@ def thread_list(request):
         # Filter threads based on the search query
         threads = threads.filter(title__icontains=query)
 
+    # Annotate the queryset with the count of upvotes
+    threads = threads.annotate(num_upvotes=Count('upvotes'))
+
+    threads = threads.order_by('-num_upvotes')
+
     return render(request, 'mysite/thread_list.html', {'threads': threads})
+
+def upvote_thread(request, thread_id):
+    thread = get_object_or_404(Thread, pk=thread_id)
+    user = request.user
+    
+    if user in thread.upvotes.all():
+        thread.upvotes.remove(user)  # Revoke upvote
+    else:
+        thread.upvotes.add(user)  # Upvote the thread
+    
+    return redirect('thread_list')
+
+from .models import Thread
+from .forms import ThreadForm
+
+def edit_thread(request, pk):
+    thread = get_object_or_404(Thread, pk=pk)
+    if request.method == 'POST':
+        form = ThreadForm(request.POST, instance=thread)
+        if form.is_valid():
+            form.save()
+            return redirect('thread_detail', pk=pk)
+    else:
+        form = ThreadForm(instance=thread)
+    return render(request, 'mysite/edit_thread.html', {'form': form, 'thread': thread})
 
 def thread_detail(request, pk):
     thread = get_object_or_404(Thread, pk=pk)
@@ -240,6 +271,30 @@ def create_post(request, pk):
     else:
         form = PostForm()
     return render(request, 'mysite/create_post.html', {'form': form, 'thread': thread})
+
+@login_required
+def delete_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+
+    if request.user == post.author:
+        thread = post.thread
+        post.delete()
+        return redirect('thread_detail', pk=thread.pk)
+
+
+from .forms import PostForm
+
+@login_required
+def edit_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == 'POST':
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('thread_detail', pk=post.thread.pk)  # Redirect to thread detail
+    else:
+        form = PostForm(instance=post)
+    return render(request, 'mysite/edit_post.html', {'form': form})
 
 
 def news(request):

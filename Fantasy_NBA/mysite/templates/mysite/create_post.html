@@ -3,12 +3,12 @@
 {% block title %} Create New Post {% endblock %}
 
 {% block content %}
-<div class="container" style="padding-top: 20px;">
-  <div class="row">
-    <div class="col-md-6 offset-md-3">
-      <div class="card">
+<div class="container" style="padding-top: 40px;">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow">
         <div class="card-body">
-          <h1 class="card-title">Create New Post</h1>
+          <h1 class="card-title mb-4">Create New Post</h1>
 
           <form method="post" action="{% url 'create_post' pk=thread.pk %}">
             {% csrf_token %}
@@ -21,4 +21,3 @@
   </div>
 </div>
 {% endblock %}
-  

@@ -12,7 +12,7 @@
   .creator-info, .post-meta {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Align items and add space between them */
+    justify-content: space-between;
     margin-bottom: 10px;
   }
 
@@ -21,24 +21,37 @@
     height: 50px;
     border-radius: 50%;
     margin-right: 10px;
-    object-fit: cover; /* Ensures the image is cropped to fit */
+    object-fit: cover;
   }
 
   .thread-detail {
     margin-bottom: 20px;
-    position: relative; /* Set position relative for positioning delete button */
+    position: relative;
   }
 
   .delete-thread-btn {
-    background-color: #dc3545; /* Red color */
+    background-color: #dc3545;
     color: white;
     border: none;
     padding: 5px 10px;
     border-radius: 5px;
     cursor: pointer;
-    position: absolute; /* Position the button absolutely */
-    top: 0; /* Align to the top */
-    right: 0; /* Align to the right */
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  .edit-post-btn {
+    font-size: 15px;
+    margin-right: 10px; /* Add margin between edit and delete buttons */
+  }
+  .delete-post-btn {
+    margin-right: 10px;
+    color: #dc3545;
+    font-size: 15px;
+  }
+
+  .edit-post-btn:hover, .delete-post-btn:hover {
+    text-decoration: underline;
   }
 
   .post {
@@ -46,8 +59,9 @@
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 10px;
-    width: 90vw; /* Set the width of posts to 90% of viewport width */
-    box-sizing: border-box; /* Ensure padding and border are included in width */
+    width: 100%;
+    box-sizing: border-box;
+    position: relative; /* Make post container relative for absolute positioning */
   }
 
   .post p {
@@ -61,27 +75,42 @@
 
   .post-content {
     display: flex;
-    align-items: flex-start; /* Align items to the top */
+    align-items: flex-start;
   }
 
   .post-content img {
     margin-right: 10px;
   }
+
+  .edit-delete-container {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+  }
 </style>
 
 <div class="container" style="padding-top: 50px;">
   <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-12">
       <div class="thread-detail">
         <div class="creator-info">
-          <h1 style="padding-bottom: 30px;">{{ thread.title }}</h1>
+          <h1 style="padding-bottom: 10px;">{{ thread.title }}</h1>
           {% if user.is_authenticated and thread.creator == user %}
-            <form method="post" action="{% url 'delete_thread' pk=thread.pk %}">
-              {% csrf_token %}
-              <button type="submit" class="delete-thread-btn">Delete Thread</button>
-            </form>
+            <div>
+              <form method="post" action="{% url 'delete_thread' pk=thread.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="delete-thread-btn">Delete Thread</button>
+              </form>
+              <a href="{% url 'edit_thread' pk=thread.pk %}" class="btn btn-secondary ml-2" style="margin-top:50px;">Edit Thread</a>
+            </div>
           {% endif %}
         </div>
+        <form method="post" action="{% url 'create_post' pk=thread.pk %}">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="btn btn-primary" style="margin-bottom: 20px;">Create New Post</button>
+        </form>
+
         {% for post in thread.post_set.all %}
           <div class="post">
             <div class="post-content">
@@ -92,20 +121,15 @@
               </div>
             </div>
             <p class="text-muted">Posted on {{ post.created_at }}</p>
+            {% if user.is_authenticated and post.author == user %}
+              <div class="edit-delete-container">
+                <a href="{% url 'edit_post' pk=post.pk %}" class="edit-post-btn">Edit</a>
+                <a href="{% url 'delete_post' pk=post.pk %}" class="delete-post-btn">Delete</a>
+              </div>
+            {% endif %}
           </div>
         {% endfor %}
       </div>
-
-      <hr>
-
-      <h3>Add New Post</h3>
-      <form method="post" action="{% url 'create_post' pk=thread.pk %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Add</button>
-      </form>
-    </div>
-    <div class="col-md-4">
     </div>
   </div>
 </div>
