@@ -16,7 +16,7 @@
     </form>
     <div style="padding-bottom: 20px;" class="row">
         <div class="col-md-8">
-            <ul class="list-group">
+            <ul style="width: 100%;" class="list-group">
                 {% for news_item in news_data %}
                 <li class="list-group-item">
                     <a href="{{ news_item.url }}" target="_blank">{{ news_item.title }}</a>

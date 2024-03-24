@@ -38,6 +38,44 @@
 
 <a href="{% url 'teambuilder_update' %}" class="update-team-button">Update Team</a>
 
+<div class="starters-container">
+  <h3>Starters</h3>
+  <div class="player-cards-container">
+    {% for player in starters %}
+    <div class="player-card">
+      <img src="{{ player.team.logo }}" alt="{{ player.team.name }} Logo" class="team-logo">
+      <h4>{{ player.first_name }} {{ player.last_name }}</h4>
+      <p><strong>Team:</strong> {{ player.team }}</p>
+      <p><strong>PPG:</strong> {{ player.PPG }}</p>
+      <p><strong>APG:</strong> {{ player.APG }}</p>
+      <p><strong>RPG:</strong> {{ player.RPG }}</p>
+      <p><strong>SPG:</strong> {{ player.SPG }}</p>
+      <p><strong>BPG:</strong> {{ player.BPG }}</p>
+      <!-- Add additional player information here -->
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="bench-container">
+  <h3>Bench</h3>
+  <div class="player-cards-container">
+    {% for player in bench_players %}
+    <div class="player-card">
+      <img src="{{ player.team.logo }}" alt="{{ player.team.name }} Logo" class="team-logo">
+      <h4>{{ player.first_name }} {{ player.last_name }}</h4>
+      <p><strong>Team:</strong> {{ player.team }}</p>
+      <p><strong>PPG:</strong> {{ player.PPG }}</p>
+      <p><strong>APG:</strong> {{ player.APG }}</p>
+      <p><strong>RPG:</strong> {{ player.RPG }}</p>
+      <p><strong>SPG:</strong> {{ player.SPG }}</p>
+      <p><strong>BPG:</strong> {{ player.BPG }}</p>
+      <!-- Add additional player information here -->
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
 <style>
   /* Styling for slots */
   #team-builder-container {
@@ -114,5 +152,34 @@
     text-decoration: none;
     font-size: 16px;
   }
+  .starters-container, .bench-container {
+    margin-top: 30px;
+  }
+
+  .starters-container h3, .bench-container h3 {
+    text-align: center;
+  }
+
+  .player-cards-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* Styling for player cards */
+  .player-card {
+    width: 200px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 10px;
+    text-align: center;
+  }
+  .team-logo {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+  }
+
 </style>
 {% endblock %}
