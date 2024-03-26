@@ -64,7 +64,6 @@ def playercomparison(request):
             player1 = form.cleaned_data['player1']
             player2 = form.cleaned_data['player2']
             selected_stats = form.cleaned_data['selected_stats']
-            print(selected_stats)
 
             player1_name = player1.first_name + " " + player1.last_name
             player2_name = player2.first_name + " " + player2.last_name
@@ -75,13 +74,16 @@ def playercomparison(request):
             player1_stats = get_player_stats(player1_id)
             player2_stats = get_player_stats(player2_id)
 
-            player1_stats_dict = prepare_player_stats(player1_stats, selected_stats, player1_name)
-            player2_stats_dict = prepare_player_stats(player2_stats, selected_stats, player2_name)
+            player1_stats = prepare_player_stats(player1_stats, selected_stats, player1_name)
+            player2_stats = prepare_player_stats(player2_stats, selected_stats, player2_name)
+            print(player1_stats, player2_stats)
 
             return render(request, 'mysite/playercomparison.html', {
                 'form': form,
-                'player1_stats': player1_stats_dict,
-                'player2_stats': player2_stats_dict,
+                'player1_name': player1_name,
+                'player2_name': player2_name,
+                'player1_stats': player1_stats,
+                'player2_stats': player2_stats,
                 'selected_stats': selected_stats,
             })
         else:
@@ -93,10 +95,10 @@ def playercomparison(request):
 
 
 def prepare_player_stats(stats_df, selected_stats, player_name):
-    stats_dict = {'player_name': player_name}
+    stats = []
     for stat in selected_stats:
-        stats_dict[stat] = stats_df[stat].values[0]
-    return stats_dict
+        stats.append(stats_df[stat].values[0])
+    return stats
 
 
 def get_fixtures_for_date(api_key, date):
@@ -197,20 +199,26 @@ from .models import Thread, Post
 from .forms import ThreadForm, PostForm
 from django.db.models import Count
 
+@login_required
 def thread_list(request):
     query = request.GET.get('q')
+    sort_option = request.GET.get('sort')
+
     threads = Thread.objects.all()
+    threads = threads.order_by('-created_at')
 
     if query:
-        # Filter threads based on the search query
         threads = threads.filter(title__icontains=query)
 
-    # Annotate the queryset with the count of upvotes
-    threads = threads.annotate(num_upvotes=Count('upvotes'))
+    if sort_option == 'likes':
+        threads = threads.annotate(num_upvotes=Count('upvotes')).order_by('-num_upvotes')
+    if sort_option == 'recent':
+        threads = threads.order_by('-created_at')
 
-    threads = threads.order_by('-num_upvotes')
 
-    return render(request, 'mysite/thread_list.html', {'threads': threads})
+    return render(request, 'mysite/thread_list.html', {'threads': threads, 'sort_by': sort_option})
+
+
 
 def upvote_thread(request, thread_id):
     thread = get_object_or_404(Thread, pk=thread_id)
@@ -239,7 +247,7 @@ def edit_thread(request, pk):
 
 def thread_detail(request, pk):
     thread = get_object_or_404(Thread, pk=pk)
-    posts = thread.post_set.all()
+    posts = thread.post_set.order_by('-created_at')
     return render(request, 'mysite/thread_detail.html', {'thread': thread, 'posts': posts})
 
 @login_required
@@ -348,6 +356,9 @@ def teambuilder(request):
     fantasy_team = FantasyTeam.objects.get(user=request.user)
     starters = [fantasy_team.player1, fantasy_team.player2, fantasy_team.player3, fantasy_team.player4, fantasy_team.player5]
     bench_players = [fantasy_team.player6, fantasy_team.player7, fantasy_team.player8, fantasy_team.player9, fantasy_team.player10]
+
+    for player in starters + bench_players:
+        player.team_info = Team.objects.filter(name=player.team).first()
 
     return render(request, 'mysite/teambuilder.html', {'starters': starters, 'bench_players': bench_players})
 

@@ -3,7 +3,7 @@
 {% block title %} Player Comparison {% endblock %}
 
 {% block content %}
-<div class="container">
+<div style="padding-top: 40px;" class="container">
     <div class="row mt-5">
         <div class="col-md-8 offset-md-2">
             <h2 class="text-center mb-4">Player Comparison Radar Chart</h2>
@@ -22,32 +22,18 @@
         labels: [{% for stat_label in selected_stats %}'{{ stat_label }}',{% endfor %}],
         datasets: [
             {
-                label: '{{ player1_stats.player_name }}',
+                label: '{{ player1_name }}',
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 2,
-                data: [
-                    {% for stat_label, stat_value in player1_stats.items %}
-                        {% if not forloop.first %},{% endif %}
-                        {% if not stat_label == 'player_name' %}
-                            {{ stat_value }}
-                        {% endif %}
-                    {% endfor %}
-                ],
+                data: [{% for stat in player1_stats %}{{stat}},{% endfor %}],
             },
             {
-                label: '{{ player2_stats.player_name }}',
+                label: '{{ player2_name }}',
                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
                 borderColor: 'rgba(255, 99, 132, 1)',
                 borderWidth: 2,
-                data: [
-                    {% for stat_label, stat_value in player2_stats.items %}
-                        {% if not forloop.first %},{% endif %}
-                        {% if not stat_label == 'player_name' %}
-                            {{ stat_value }}
-                        {% endif %}
-                    {% endfor %}
-                ],
+                data: [{% for stat in player2_stats %}{{stat}},{% endfor %}],
             },
         ]
     };

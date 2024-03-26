@@ -77,6 +77,10 @@
     cursor: pointer; /* Show cursor pointer when hovering */
   }
 
+  .toggle-container {
+    margin-top: 10px;
+  }
+
 </style>
 
 <div class="container">
@@ -86,6 +90,18 @@
     <input type="text" name="q" placeholder="Search threads..." class="search-input">
     <button type="submit" class="btn btn-primary search-button">Search</button>
   </form>
+
+  <div class="toggle-container">
+    <label>
+      <input type="radio" name="sortOption" id="sortMostLiked" value="likes" {% if sort_by == 'likes' %}checked{% endif %}>
+      Most Liked
+    </label>
+    <label>
+      <input type="radio" name="sortOption" id="sortMostRecent" value="recent" {% if sort_by != 'likes' %}checked{% endif %}>
+      Most Recent
+    </label>
+  </div>
+  
 
   <div class="thread-list">
     <a href="{% url 'create_thread' %}" class="btn btn-primary mb-3">Create New Thread</a>
@@ -118,4 +134,27 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add event listener to radio buttons
+    var radioButtons = document.querySelectorAll('input[name="sortOption"]');
+    radioButtons.forEach(function(button) {
+      button.addEventListener('click', toggleSort);
+    });
+  });
+  
+  function toggleSort() {
+    var sortOption = document.querySelector('input[name="sortOption"]:checked').value;
+    var url;
+    if (sortOption === 'likes') {
+      url = "{% url 'thread_list' %}?sort=likes";
+    } else {
+      url = "{% url 'thread_list' %}?sort=recent";
+    }
+    window.location.href = url;
+  }
+</script>
+
+
 {% endblock %}

@@ -111,7 +111,7 @@
           <button type="submit" class="btn btn-primary" style="margin-bottom: 20px;">Create New Post</button>
         </form>
 
-        {% for post in thread.post_set.all %}
+        {% for post in posts %}
           <div class="post">
             <div class="post-content">
               <img class="profile-picture" src="{{ post.author.profile.profile_picture.url }}" alt="{{ post.author.username }}">

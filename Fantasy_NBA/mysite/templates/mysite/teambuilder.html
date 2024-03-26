@@ -43,7 +43,7 @@
   <div class="player-cards-container">
     {% for player in starters %}
     <div class="player-card">
-      <img src="{{ player.team.logo }}" alt="{{ player.team.name }} Logo" class="team-logo">
+      <img src="{{ player.team_info.logo }}" alt="{{ player.team_info.name }} Logo" class="team-logo">
       <h4>{{ player.first_name }} {{ player.last_name }}</h4>
       <p><strong>Team:</strong> {{ player.team }}</p>
       <p><strong>PPG:</strong> {{ player.PPG }}</p>
@@ -62,7 +62,7 @@
   <div class="player-cards-container">
     {% for player in bench_players %}
     <div class="player-card">
-      <img src="{{ player.team.logo }}" alt="{{ player.team.name }} Logo" class="team-logo">
+      <img src="{{ player.team_info.logo }}" alt="{{ player.team_info.name }} Logo" class="team-logo">
       <h4>{{ player.first_name }} {{ player.last_name }}</h4>
       <p><strong>Team:</strong> {{ player.team }}</p>
       <p><strong>PPG:</strong> {{ player.PPG }}</p>
