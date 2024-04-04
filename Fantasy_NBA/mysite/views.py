@@ -15,19 +15,24 @@ import requests
 def home(request):
     if request.user.is_authenticated:
         url = "https://nba-latest-news.p.rapidapi.com/articles"
-        favorite_team = request.user.profile.favorite_team.name.split()[-1]  # Extract last name
-        querystring = {"team": favorite_team}
+        try:
+            favorite_team = request.user.profile.favorite_team.name.split()[-1]  # Extract last name
+            querystring = {"team": favorite_team}
 
-        headers = {
-            "X-RapidAPI-Key": "1653a1f50amsha7a04d5574bda05p123149jsn718df4a7a999",
-            "X-RapidAPI-Host": "nba-latest-news.p.rapidapi.com"
-        }
+            headers = {
+                "X-RapidAPI-Key": "1653a1f50amsha7a04d5574bda05p123149jsn718df4a7a999",
+                "X-RapidAPI-Host": "nba-latest-news.p.rapidapi.com"
+            }
 
-        response = requests.get(url, headers=headers, params=querystring)
-        if response.status_code == 200:
-            news_data = response.json()
-            nba_news = news_data[:5]
-        else:
+            response = requests.get(url, headers=headers, params=querystring)
+            if response.status_code == 200:
+                news_data = response.json()
+                nba_news = news_data[:5]
+            else:
+                nba_news = []
+        
+        except:
+            favorite_team = ''
             nba_news = []
 
         return render(request, 'mysite/home.html', {'nba_news': nba_news, 'favorite_team': favorite_team})
@@ -54,6 +59,8 @@ def get_player_stats(player_id, per_mode='PerGame', league_id='', season='2023')
     season_stats = player_stats[player_stats['SEASON_ID'] == f"{season}-{int(season[-2:]) + 1}"]
     return season_stats
 
+from nba_api.stats.static import players
+from nba_api.stats.endpoints import PlayerFantasyProfileBarGraph
 
 @login_required
 def playercomparison(request):
@@ -74,9 +81,13 @@ def playercomparison(request):
             player1_stats = get_player_stats(player1_id)
             player2_stats = get_player_stats(player2_id)
 
-            player1_stats = prepare_player_stats(player1_stats, selected_stats, player1_name)
-            player2_stats = prepare_player_stats(player2_stats, selected_stats, player2_name)
-            print(player1_stats, player2_stats)
+            player1_stats = prepare_player_stats(player1_stats, selected_stats)
+            player2_stats = prepare_player_stats(player2_stats, selected_stats)
+
+            player1_fantasystats, headers = get_fantasy_stats(player1_id)
+            player2_fantasystats, headers = get_fantasy_stats(player2_id)
+            print(player1_fantasystats, player2_fantasystats, headers)
+
 
             return render(request, 'mysite/playercomparison.html', {
                 'form': form,
@@ -84,6 +95,9 @@ def playercomparison(request):
                 'player2_name': player2_name,
                 'player1_stats': player1_stats,
                 'player2_stats': player2_stats,
+                'player1_fantasystats': player1_fantasystats,
+                'player2_fantasystats': player2_fantasystats,
+                'headers': headers,
                 'selected_stats': selected_stats,
             })
         else:
@@ -94,11 +108,38 @@ def playercomparison(request):
     return render(request, 'mysite/playercomparison_form.html', {'form': form})
 
 
-def prepare_player_stats(stats_df, selected_stats, player_name):
+def prepare_player_stats(stats_df, selected_stats):
     stats = []
     for stat in selected_stats:
         stats.append(stats_df[stat].values[0])
     return stats
+
+def get_fantasy_stats(player_id):
+    # Fetch fantasy stats for a player using PlayerFantasyProfileBarGraph endpoint
+    # Implement this function to fetch fantasy stats for a given player ID
+    # Example:
+    fantasy_stats = PlayerFantasyProfileBarGraph(player_id).season_avg
+    fantasy_stats_data = fantasy_stats.data
+    headers = fantasy_stats.data['headers'][3:]
+    
+    # Extract relevant stats into an array
+    player_fantasystats = [
+        fantasy_stats_data['data'][0][3],
+        fantasy_stats_data['data'][0][4],  # FAN_DUEL_PTS
+        fantasy_stats_data['data'][0][5],  # NBA_FANTASY_PTS
+        fantasy_stats_data['data'][0][6],  # PTS
+        fantasy_stats_data['data'][0][7],  # REB
+        fantasy_stats_data['data'][0][8],  # AST
+        fantasy_stats_data['data'][0][9],  # FG3M
+        fantasy_stats_data['data'][0][10], # FT_PCT
+        fantasy_stats_data['data'][0][11], # STL
+        fantasy_stats_data['data'][0][12], # BLK
+        fantasy_stats_data['data'][0][13], # TOV
+        fantasy_stats_data['data'][0][14], # FG_PCT
+    ]
+
+    return player_fantasystats, headers
+
 
 
 def get_fixtures_for_date(api_key, date):

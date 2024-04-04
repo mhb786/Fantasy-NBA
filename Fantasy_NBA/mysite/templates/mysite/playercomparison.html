@@ -3,15 +3,57 @@
 {% block title %} Player Comparison {% endblock %}
 
 {% block content %}
-<div style="padding-top: 40px;" class="container">
+
+<style>
+    .table-responsive {
+        overflow-x: auto;
+    }
+</style>
+
+<div style="padding-top: 20px;" class="container">
     <div class="row mt-5">
         <div class="col-md-8 offset-md-2">
-            <h2 class="text-center mb-4">Player Comparison Radar Chart</h2>
+            <h2 class="text-center mb-4">Player Comparison Radar Chart {{ player1_fantasystats.PTS }}</h2>
             <div class="card">
                 <div class="card-body">
                     <canvas id="radarChart" width="400" height="400"></canvas>
                 </div>
-            </div>
+            </div> 
+
+            <div class="container mt-5" style="padding-bottom: 20px;" >
+                <h2 class="text-center mb-4">Player Stats Table</h2>
+                <div class="row justify-content-center">
+                    <div class="col-lg-15">
+                        <div class="table-responsive">
+                            <table class="table table-bordered text-center">
+                                <thead>
+                                    <tr>
+                                        <th>Player</th>
+                                        {% for header in headers %}
+                                        <th>{{ header }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{ player1_name }}</td>
+                                        {% for stat in player1_fantasystats %}
+                                        <td>{{ stat }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        <td>{{ player2_name }}</td>
+                                        {% for stat in player2_fantasystats %}
+                                        <td>{{ stat }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>            
+            
         </div>
     </div>
 </div>
