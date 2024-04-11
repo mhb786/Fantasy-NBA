@@ -1,0 +1,21 @@
+{% extends 'mysite/base.html' %}
+
+{% block title %} NBA Teams {% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 style="padding-top:50px;" class="text-center mt-5">NBA Teams</h1>
+    <div class="row mt-5">
+        {% for team in teams %}
+        <div class="col-md-4 mb-4">
+            <a href="{% url 'team_profile' team_id=team.team_id %}" class="btn btn-primary btn-block" style="height: 100px; padding-top: 20px; padding-bottom: 20px;">
+                <div class="d-flex align-items-center justify-content-center">
+                    <img src="{{ team.logo }}" alt="{{ team.name }} Logo" class="img-fluid mr-2" style="max-height: 50px;">
+                    <span>{{ team.name }}</span>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

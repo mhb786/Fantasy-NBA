@@ -427,6 +427,12 @@ def delete_thread(request, pk):
         thread.delete()
     return redirect('forum')
 
+@login_required
+def team_list(request):
+    teams = Team.objects.all()
+    return render(request, 'mysite/team_list.html', {'teams': teams})
+
+
 def get_stats(player_id):
     try:
         fantasy_stats = PlayerFantasyProfileBarGraph(player_id).season_avg
@@ -469,3 +475,4 @@ def team_profile(request, team_id):
             players_with_stats.append(player_stats)
 
     return render(request, 'mysite/team_profile.html', {'team': team, 'players_with_stats': players_with_stats})
+

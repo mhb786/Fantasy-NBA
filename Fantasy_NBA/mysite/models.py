@@ -56,7 +56,7 @@ class Thread(models.Model):
 
 class Post(models.Model):
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts', default=1)  # Default to the superuser (ID=1)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts', default=1)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
