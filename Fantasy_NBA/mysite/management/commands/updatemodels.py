@@ -6,7 +6,7 @@ from nba_api.stats.endpoints import commonallplayers
 from mysite.models import NBAPlayer
 
 class Command(BaseCommand):
-    help = "import booms"
+    help = ""
 
     def add_arguments(self, parser):
         pass

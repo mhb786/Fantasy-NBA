@@ -465,12 +465,12 @@ def team_profile(request, team_id):
     for player in players:
         player_name = player.first_name + " " + player.last_name
         player_id = get_player_id_by_full_name(player_name)
-        fantasy_stats = get_stats(player_id)
+        stats = get_stats(player_id)
         if fantasy_stats != []:
             player_stats = {
                 'first_name': player.first_name,
                 'last_name': player.last_name,
-                'fantasy_stats': fantasy_stats
+                'stats': stats
             }
             players_with_stats.append(player_stats)
 

@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
         nba_players = players.get_active_players()  
 
-        for player in nba_players[400:]:
+        for player in nba_players:
             stats = playergamelog.PlayerGameLog(player_id=player['id'], season='2022-23').get_data_frames()[0]
             player_profile = playerprofilev2.PlayerProfileV2(player_id=player['id']).get_data_frames()[0]
 
