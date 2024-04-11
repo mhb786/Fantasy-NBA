@@ -1,0 +1,67 @@
+{% extends 'mysite/base.html' %}
+
+{% block title %} {{ team.name }} Profile Page {% endblock %}
+<head>
+    <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0-alpha3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.bootstrap5.min.css">
+</head>
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{{ team.name }} Profile</h1>
+                <hr>
+                <table id="player-stats-table" class="display responsive" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>FAN_DUEL_PTS</th>
+                            <th>NBA_FANTASY_PTS</th>
+                            <th>PTS</th>
+                            <th>REB</th>
+                            <th>AST</th>
+                            <th>FG3M</th>
+                            <th>FT_PCT</th>
+                            <th>STL</th>
+                            <th>BLK</th>
+                            <th>TOV</th>
+                            <th>FG_PCT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for player in players_with_stats %}
+                            <tr>
+                                <td>{{ player.first_name }}</td>
+                                <td>{{ player.last_name }}</td>
+                                {% for stat in player.fantasy_stats %}
+                                    <td>{{ stat }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap5.min.js"></script>
+
+
+<script>
+    $(document).ready(function() {
+        $('#player-stats-table').DataTable({
+            "paging": true,
+            "ordering": true,
+            "info": true
+        });
+    });
+</script>
+{% endblock %}

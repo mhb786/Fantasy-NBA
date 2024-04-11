@@ -24,6 +24,7 @@ path('threads/<int:pk>/edit/', login_required(views.edit_thread), name='edit_thr
 path('profile/', login_required(views.profile), name='profile'),
 path('teambuilder/', login_required(views.teambuilder), name='teambuilder'),
 path('teambuilder_update/', login_required(views.teambuilder_update), name='teambuilder_update'),
+path('team/<int:team_id>/', login_required(views.team_profile), name='team_profile'),
 ]
 
 if settings.DEBUG:

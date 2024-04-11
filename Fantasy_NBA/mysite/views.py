@@ -6,7 +6,7 @@ from django.core.serializers import serialize
 from .forms import PlayerComparisonForm, NBAStatsForm
 from nba_api.stats.endpoints import playercareerstats
 from nba_api.stats.static import players
-import pandas as pd
+import pandas as pd 
 from nba_api.stats.endpoints.leagueleaders import LeagueLeaders
 import requests
 
@@ -426,3 +426,46 @@ def delete_thread(request, pk):
     if thread.creator == request.user:
         thread.delete()
     return redirect('forum')
+
+def get_stats(player_id):
+    try:
+        fantasy_stats = PlayerFantasyProfileBarGraph(player_id).season_avg
+        fantasy_stats_data = fantasy_stats.data
+        
+        # Extract relevant stats into an array
+        player_fantasystats = [
+            fantasy_stats_data['data'][0][4],  # FAN_DUEL_PTS
+            fantasy_stats_data['data'][0][5],  # NBA_FANTASY_PTS
+            fantasy_stats_data['data'][0][6],  # PTS
+            fantasy_stats_data['data'][0][7],  # REB
+            fantasy_stats_data['data'][0][8],  # AST
+            fantasy_stats_data['data'][0][9],  # FG3M
+            fantasy_stats_data['data'][0][10], # FT_PCT
+            fantasy_stats_data['data'][0][11], # STL
+            fantasy_stats_data['data'][0][12], # BLK
+            fantasy_stats_data['data'][0][13], # TOV
+            fantasy_stats_data['data'][0][14], # FG_PCT
+        ]
+
+        return player_fantasystats
+    except:
+        return []
+
+def team_profile(request, team_id):
+    team = Team.objects.get(team_id=team_id)
+    players = NBAPlayer.objects.filter(team=team.name)
+
+    players_with_stats = []
+    for player in players:
+        player_name = player.first_name + " " + player.last_name
+        player_id = get_player_id_by_full_name(player_name)
+        fantasy_stats = get_stats(player_id)
+        if fantasy_stats != []:
+            player_stats = {
+                'first_name': player.first_name,
+                'last_name': player.last_name,
+                'fantasy_stats': fantasy_stats
+            }
+            players_with_stats.append(player_stats)
+
+    return render(request, 'mysite/team_profile.html', {'team': team, 'players_with_stats': players_with_stats})
