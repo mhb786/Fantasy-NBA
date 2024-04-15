@@ -3,6 +3,12 @@
 {% block title %} Team Builder {% endblock %}
 
 {% block content %}
+<div id="team-stats">
+  <div class="team-stats-box">
+    <h6>Average Fantasy Points</h6>
+    <p>{{ avgteam_fpts }}</p>
+  </div>
+</div>
 <div id="team-builder-container">
   <div id="team-sheet">
     <h2 style="padding-bottom: 50px;" >Your Fantasy Team</h2>
@@ -46,11 +52,12 @@
       <img src="{{ player.team_info.logo }}" alt="{{ player.team_info.name }} Logo" class="team-logo">
       <h4>{{ player.first_name }} {{ player.last_name }}</h4>
       <p><strong>Team:</strong> {{ player.team }}</p>
+      <p><strong>Fantasy Points:</strong> {{ player.FPTS }}</p>
       <p><strong>PPG:</strong> {{ player.PPG }}</p>
       <p><strong>APG:</strong> {{ player.APG }}</p>
       <p><strong>RPG:</strong> {{ player.RPG }}</p>
       <p><strong>SPG:</strong> {{ player.SPG }}</p>
-      <p><strong>BPG:</strong> {{ player.BPG }}</p>
+      <p><strong>BPG:</strong> {{ player.FG_PCT }}</p>
       <!-- Add additional player information here -->
     </div>
     {% endfor %}
@@ -65,11 +72,12 @@
       <img src="{{ player.team_info.logo }}" alt="{{ player.team_info.name }} Logo" class="team-logo">
       <h4>{{ player.first_name }} {{ player.last_name }}</h4>
       <p><strong>Team:</strong> {{ player.team }}</p>
+      <p><strong>Fantasy Points:</strong> {{ player.FPTS }}</p>
       <p><strong>PPG:</strong> {{ player.PPG }}</p>
       <p><strong>APG:</strong> {{ player.APG }}</p>
       <p><strong>RPG:</strong> {{ player.RPG }}</p>
       <p><strong>SPG:</strong> {{ player.SPG }}</p>
-      <p><strong>BPG:</strong> {{ player.BPG }}</p>
+      <p><strong>BPG:</strong> {{ player.FG_PCT }}</p>
       <!-- Add additional player information here -->
     </div>
     {% endfor %}
@@ -77,7 +85,6 @@
 </div>
 
 <style>
-  /* Styling for slots */
   #team-builder-container {
     display: flex;
     justify-content: center;
@@ -115,12 +122,13 @@
     height: 120px; /* Ensure all slots are the same size */
     border: 2px solid #ccc;
     border-radius: 10px;
-    background-color: #f0f0f0;
+    background-color: #f0f0f0; /* Player slot background color */
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 16px;
     margin-right: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
   }
 
   .player-slot:last-child, .slot:last-child {
@@ -181,5 +189,31 @@
     margin-bottom: 10px;
   }
 
+  #team-stats {
+    position: absolute;
+    top: 90px;
+    left: 60px;
+  }
+  
+  .team-stats-box {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  }
+  
+  .team-stats-box h6 {
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .team-stats-box p {
+    margin: 0;
+    font-size: 18px;
+  }
+  
+  
 </style>
 {% endblock %}

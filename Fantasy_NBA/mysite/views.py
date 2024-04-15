@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from .models import NBAPlayer
 from django.core.serializers import serialize
@@ -9,6 +8,7 @@ from nba_api.stats.static import players
 import pandas as pd 
 from nba_api.stats.endpoints.leagueleaders import LeagueLeaders
 import requests
+from datetime import datetime, timedelta
 
 
 @login_required
@@ -35,7 +35,21 @@ def home(request):
             favorite_team = ''
             nba_news = []
 
-        return render(request, 'mysite/home.html', {'nba_news': nba_news, 'favorite_team': favorite_team})
+        api_key = "1653a1f50amsha7a04d5574bda05p123149jsn718df4a7a999" 
+
+        date = datetime.today().date()
+        fixtures = get_fixtures_for_date(api_key, date)
+        
+        while not fixtures:
+            # Decrement the date by one day
+            date -= timedelta(days=1)
+            fixtures = get_fixtures_for_date(api_key, date)
+        
+        fixture = fixtures[-1]
+        fixture_datetime = fixture['date']['start']
+        fixture_datetime = datetime.strptime(fixture_datetime, '%Y-%m-%dT%H:%M:%S.%fZ')
+
+        return render(request, 'mysite/home.html', {'nba_news': nba_news, 'favorite_team': favorite_team, 'fixture': fixture, 'fixture_datetime': fixture_datetime})
     else:
         return render(request, 'mysite/home.html')
 
@@ -346,6 +360,36 @@ def edit_post(request, pk):
     return render(request, 'mysite/edit_post.html', {'form': form})
 
 
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+
+    mid = len(arr) // 2
+    left_half = arr[:mid]
+    right_half = arr[mid:]
+
+    left_half = merge_sort(left_half)
+    right_half = merge_sort(right_half)
+
+    return merge(left_half, right_half)
+
+def merge(left, right):
+    result = []
+    left_idx, right_idx = 0, 0
+
+    while left_idx < len(left) and right_idx < len(right):
+        if left[left_idx] < right[right_idx]:
+            result.append(left[left_idx])
+            left_idx += 1
+        else:
+            result.append(right[right_idx])
+            right_idx += 1
+
+    result.extend(left[left_idx:])
+    result.extend(right[right_idx:])
+
+    return result
+
 def news(request):
     player_name = request.GET.get('q', '')
     url = "https://nba-latest-news.p.rapidapi.com/articles"
@@ -360,7 +404,18 @@ def news(request):
     response = requests.get(url, headers=headers, params=querystring)
     news_data = response.json()
 
-    return render(request, 'mysite/news.html', {'news_data': news_data})
+    # Extract article titles
+    article_titles = [article['title'] for article in news_data]
+    print(article_titles)
+
+    # Sort article titles using merge sort
+    sorted_article_titles = merge_sort(article_titles)
+    print(sorted_article_titles)
+
+    # Create a list of sorted articles using the sorted titles
+    sorted_articles = [next(article for article in news_data if article['title'] == title) for title in sorted_article_titles]
+
+    return render(request, 'mysite/news.html', {'news_data': sorted_articles})
 
 
 from .models import Profile, Team
@@ -382,15 +437,32 @@ def profile(request):
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)
-    teams = Team.objects.all()  # Assuming you have a Team model
+    post_count = Post.objects.filter(author=request.user).count()
+    thread_count = Thread.objects.filter(creator=request.user).count()
+    teams = Team.objects.all()
     context = {
         'u_form': u_form,
         'p_form': p_form,
-        'teams': teams
+        'teams': teams,
+        'post_count': post_count,
+        'thread_count': thread_count
     }
     return render(request, 'mysite/profile.html', context)
 
 from .models import FantasyTeam
+
+def getplayerstats(player):
+    player_name = player.first_name + " " + player.last_name
+    player_id = get_player_id_by_full_name(player_name)
+    fantasy_stats_data = PlayerFantasyProfileBarGraph(player_id).season_avg.data
+    
+    player.FPTS = fantasy_stats_data['data'][0][5]  # NBA_FANTASY_PTS
+    player.PPG = fantasy_stats_data['data'][0][6]  # PTS
+    player.RPG = fantasy_stats_data['data'][0][7]  # REB
+    player.APG = fantasy_stats_data['data'][0][8]  # AST
+    player.SPG = fantasy_stats_data['data'][0][11] # STL
+    player.FG_PCT = fantasy_stats_data['data'][0][14] # FG_PCT
+
 
 @login_required
 def teambuilder(request):
@@ -399,9 +471,12 @@ def teambuilder(request):
     bench_players = [fantasy_team.player6, fantasy_team.player7, fantasy_team.player8, fantasy_team.player9, fantasy_team.player10]
 
     for player in starters + bench_players:
+        getplayerstats(player)
         player.team_info = Team.objects.filter(name=player.team).first()
 
-    return render(request, 'mysite/teambuilder.html', {'starters': starters, 'bench_players': bench_players})
+    avgteam_fpts = sum([player.FPTS for player in starters])
+
+    return render(request, 'mysite/teambuilder.html', {'starters': starters, 'bench_players': bench_players, 'avgteam_fpts': avgteam_fpts})
 
 from .forms import UpdateTeamForm
 
@@ -466,7 +541,7 @@ def team_profile(request, team_id):
         player_name = player.first_name + " " + player.last_name
         player_id = get_player_id_by_full_name(player_name)
         stats = get_stats(player_id)
-        if fantasy_stats != []:
+        if stats != []:
             player_stats = {
                 'first_name': player.first_name,
                 'last_name': player.last_name,

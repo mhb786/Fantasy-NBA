@@ -21,7 +21,7 @@
         }
 
         .fixtures-container {
-            width: 80%;
+            width: 90%;
             margin: 20px auto;
             text-align: center; /* Center align the fixtures container */
         }
@@ -31,11 +31,13 @@
             flex-direction: column;
             align-items: center;
             background-color: #fff;
-            border: 1px solid #ddd;
+            border: 1px solid #ccc;
+            border-radius: 8px;
             padding: 15px;
             margin-bottom: 15px;
             width: 100%; /* Make each fixture take the full width */
-            box-sizing: border-box; /* Include padding and border in the width calculation */
+            box-sizing: border-box;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .team-info {
@@ -47,28 +49,29 @@
         }
 
         .team-info img {
-            max-height: 40px;
-            max-width: 40px;
+            width: 100px;
+            height: auto;
             margin-right: 10px;
         }
 
         .score {
-            font-size: 18px;
+            font-size: 24px;
             font-weight: bold;
             margin: 10px 0;
+            text-align: center;
         }
 
         .additional-info {
             text-align: center;
+            font-size: 14px;
         }
     </style>
 
     <div class="fixtures-container">
         {% if fixtures %}
-            <h2>Fixtures for {{ specific_date }}</h2>
+            <h2>{{ specific_date }}</h2>
             {% for fixture in fixtures %}
                 <div class="fixture">
-                    <p>{{ fixture.date.start|date:"D d M Y H:i"|timezone:"UTC"|date:"D d M Y H:i"|timezone:"Europe/London" }}</p>
                     <div class="team-info">
                         <img src="{{ fixture.teams.home.logo }}" alt="{{ fixture.teams.home.name }} logo">
                         <p>{{ fixture.teams.home.name }}</p>
@@ -88,4 +91,3 @@
         {% endif %}
     </div>
 {% endblock %}
-    
