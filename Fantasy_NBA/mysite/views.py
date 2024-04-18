@@ -39,12 +39,13 @@ def home(request):
 
         date = datetime.today().date()
         fixtures = get_fixtures_for_date(api_key, date)
-        
+
+
         while not fixtures:
             # Decrement the date by one day
             date -= timedelta(days=1)
             fixtures = get_fixtures_for_date(api_key, date)
-        
+            
         fixture = fixtures[-1]
         fixture_datetime = fixture['date']['start']
         fixture_datetime = datetime.strptime(fixture_datetime, '%Y-%m-%dT%H:%M:%S.%fZ')
@@ -313,6 +314,9 @@ def create_thread(request):
             new_thread = form.save(commit=False)
             new_thread.creator = request.user  # Set the creator to the currently authenticated user
             new_thread.save()
+
+            messages.success(request, 'Thread created successfully!')
+
             return redirect('thread_detail', pk=new_thread.pk)
     else:
         form = ThreadForm()
@@ -452,16 +456,19 @@ def profile(request):
 from .models import FantasyTeam
 
 def getplayerstats(player):
-    player_name = player.first_name + " " + player.last_name
-    player_id = get_player_id_by_full_name(player_name)
-    fantasy_stats_data = PlayerFantasyProfileBarGraph(player_id).season_avg.data
-    
-    player.FPTS = fantasy_stats_data['data'][0][5]  # NBA_FANTASY_PTS
-    player.PPG = fantasy_stats_data['data'][0][6]  # PTS
-    player.RPG = fantasy_stats_data['data'][0][7]  # REB
-    player.APG = fantasy_stats_data['data'][0][8]  # AST
-    player.SPG = fantasy_stats_data['data'][0][11] # STL
-    player.FG_PCT = fantasy_stats_data['data'][0][14] # FG_PCT
+    try: 
+        player_name = player.first_name + " " + player.last_name
+        player_id = get_player_id_by_full_name(player_name)
+        fantasy_stats_data = PlayerFantasyProfileBarGraph(player_id).season_avg.data
+        
+        player.FPTS = fantasy_stats_data['data'][0][5]  # NBA_FANTASY_PTS
+        player.PPG = fantasy_stats_data['data'][0][6]  # PTS
+        player.RPG = fantasy_stats_data['data'][0][7]  # REB
+        player.APG = fantasy_stats_data['data'][0][8]  # AST
+        player.SPG = fantasy_stats_data['data'][0][11] # STL
+        player.FG_PCT = fantasy_stats_data['data'][0][14] # FG_PCT
+    except:
+        pass
 
 
 @login_required
@@ -500,7 +507,7 @@ def delete_thread(request, pk):
     thread = get_object_or_404(Thread, pk=pk)
     if thread.creator == request.user:
         thread.delete()
-    return redirect('forum')
+    return redirect('thread_list')
 
 @login_required
 def team_list(request):

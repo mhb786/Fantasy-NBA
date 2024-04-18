@@ -87,6 +87,32 @@
     bottom: 5px;
     right: 5px;
   }
+
+  .notification {
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #4CAF50; /* Green */
+    color: white;
+    text-align: center;
+    padding: 16px;
+    z-index: 1000;
+    transition: opacity 0.5s ease;
+    opacity: 0;
+  }
+
+  .notification.show {
+      opacity: 1;
+  }
+
+  .notification.success {
+      background-color: #4CAF50; /* Green */
+  }
+
+  .notification.error {
+      background-color: #f44336; /* Red */
+  }
 </style>
 
 <div class="container" style="padding-top: 50px;">
@@ -133,4 +159,31 @@
     </div>
   </div>
 </div>
+
+<div id="notification" class="notification"></div>
+
+
+<!-- JavaScript to handle notification behavior -->
+<script>
+    // Function to show notification
+    function showNotification(message, type) {
+        var notification = document.getElementById('notification');
+        notification.innerHTML = message;
+        notification.className = 'notification show ' + type;
+        setTimeout(function() {
+            notification.className = 'notification';
+        }, 3000); // Adjust the time (in milliseconds) to control how long the notification stays visible
+    }
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                showNotification('{{ message }}', 'success');
+            {% endif %}
+        {% endfor %}
+    {% endif %} 
+
+    // Example usage: showNotification('Post created successfully!', 'success');
+</script>
+
 {% endblock %}

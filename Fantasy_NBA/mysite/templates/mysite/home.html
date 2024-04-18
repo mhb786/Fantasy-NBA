@@ -80,7 +80,7 @@
     <div style="padding-bottom: 20px;" class="row">
         <div class="col-md-12">
             <div class="border p-3 mb-3">
-                <h2 class="subheader">Recent Fixture</h2>
+                <h2 class="subheader">Fixtures</h2>
                 <a href="/fixtures" class="btn btn-primary btn-sm btn-fixture">View All Fixtures</a>
                 <div class="fixture-container">
                     <div class="team home-team">
@@ -88,7 +88,9 @@
                         <h3 class="team-name">{{ fixture.teams.home.name }}</h3>
                     </div>
                     <div class="score">
+                        {% if fixture.scores.home.points is not None and fixture.scores.visitors.points is not None %}
                         <h2>{{ fixture.scores.home.points }} - {{ fixture.scores.visitors.points }}</h2>
+                        {% endif %}
                         <p class="additional-info"><strong>Arena:</strong> {{ fixture.arena.name }}, {{ fixture.arena.city }}, {{ fixture.arena.state }}</p>
                         <p class="additional-info"><strong>Date:</strong> {{ fixture_datetime }}</p>
                     </div>
@@ -100,6 +102,7 @@
             </div>
         </div>
     </div>
+    
 
 
 
