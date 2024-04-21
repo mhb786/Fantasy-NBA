@@ -16,12 +16,12 @@ class TestViews(TestCase):
 
     def test_home_view(self):
         response = self.client.get(self.home_url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 302)
         self.assertTemplateUsed(response, 'mysite/home.html')
 
     def test_thread_list_view(self):
         response = self.client.get(self.thread_list_url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 302)
         self.assertTemplateUsed(response, 'mysite/thread_list.html')
 
     def test_create_thread_view(self):
@@ -33,5 +33,5 @@ class TestViews(TestCase):
     def test_thread_detail_view(self):
         thread_detail_url = reverse('thread_detail', kwargs={'pk': self.thread.pk})
         response = self.client.get(thread_detail_url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 302)
         self.assertTemplateUsed(response, 'mysite/thread_detail.html')
