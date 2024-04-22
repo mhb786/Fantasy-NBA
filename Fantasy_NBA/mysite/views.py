@@ -101,7 +101,6 @@ def playercomparison(request):
 
             player1_fantasystats, headers = get_fantasy_stats(player1_id)
             player2_fantasystats, headers = get_fantasy_stats(player2_id)
-            print(player1_fantasystats, player2_fantasystats, headers)
 
 
             return render(request, 'mysite/playercomparison.html', {
@@ -410,7 +409,6 @@ def news(request):
 
     # Extract article titles
     article_titles = [article['title'] for article in news_data]
-    print(article_titles)
 
     # Sort article titles using merge sort
     sorted_article_titles = merge_sort(article_titles)
@@ -475,12 +473,15 @@ def teambuilder(request):
     fantasy_team = FantasyTeam.objects.get(user=request.user)
     starters = [fantasy_team.player1, fantasy_team.player2, fantasy_team.player3, fantasy_team.player4, fantasy_team.player5]
     bench_players = [fantasy_team.player6, fantasy_team.player7, fantasy_team.player8, fantasy_team.player9, fantasy_team.player10]
+    try:
+        for player in starters + bench_players:
+            getplayerstats(player)
+            player.team_info = Team.objects.filter(name=player.team).first()
 
-    for player in starters + bench_players:
-        getplayerstats(player)
-        player.team_info = Team.objects.filter(name=player.team).first()
+        avgteam_fpts = sum([player.FPTS for player in starters])
+    except:
+        avgteam_fpts = 0
 
-    avgteam_fpts = sum([player.FPTS for player in starters])
 
     return render(request, 'mysite/teambuilder.html', {'starters': starters, 'bench_players': bench_players, 'avgteam_fpts': avgteam_fpts})
 
