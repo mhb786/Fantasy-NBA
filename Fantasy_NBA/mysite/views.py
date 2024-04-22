@@ -414,7 +414,6 @@ def news(request):
 
     # Sort article titles using merge sort
     sorted_article_titles = merge_sort(article_titles)
-    print(sorted_article_titles)
 
     # Create a list of sorted articles using the sorted titles
     sorted_articles = [next(article for article in news_data if article['title'] == title) for title in sorted_article_titles]
@@ -556,5 +555,8 @@ def team_profile(request, team_id):
             }
             players_with_stats.append(player_stats)
 
-    return render(request, 'mysite/team_profile.html', {'team': team, 'players_with_stats': players_with_stats})
-
+    context = {
+        'team': team,
+        'players_with_stats': players_with_stats
+    }
+    return render(request, 'mysite/team_profile.html', context)
